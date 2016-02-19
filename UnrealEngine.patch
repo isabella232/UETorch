@@ -1,31 +1,3 @@
-diff --git a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp
-index 977d885..612482f 100644
---- a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp
-+++ b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp
-@@ -16,14 +16,15 @@ void* FLinuxPlatformProcess::GetDllHandle( const TCHAR* Filename )
- 	FString AbsolutePath = FPaths::ConvertRelativePathToFull(Filename);
- 
- 	int DlOpenMode = RTLD_LAZY;
--	if (AbsolutePath.EndsWith(TEXT("libsteam_api.so")))
--	{
--		DlOpenMode |= RTLD_GLOBAL; //Global symbol resolution when loading shared objects - Needed for Steam to work when its library is loaded by a plugin
--	}
--	else
--	{
--		DlOpenMode |= RTLD_LOCAL; //Local symbol resolution when loading shared objects - Needed for Hot-Reload
--	}
-+	// if (AbsolutePath.EndsWith(TEXT("libsteam_api.so")))
-+	// {
-+	// 	DlOpenMode |= RTLD_GLOBAL; //Global symbol resolution when loading shared objects - Needed for Steam to work when its library is loaded by a plugin
-+	// }
-+	// else
-+	// {
-+	// 	DlOpenMode |= RTLD_LOCAL; //Local symbol resolution when loading shared objects - Needed for Hot-Reload
-+	// }
-+	DlOpenMode |= RTLD_GLOBAL;
- 
- 	void *Handle = dlopen( TCHAR_TO_ANSI(*AbsolutePath), DlOpenMode );
- 	if (!Handle)
 diff --git a/Engine/Source/Runtime/Engine/Classes/Engine/World.h b/Engine/Source/Runtime/Engine/Classes/Engine/World.h
 index e96e60b..292a108 100644
 --- a/Engine/Source/Runtime/Engine/Classes/Engine/World.h
@@ -41,6 +13,18 @@ index e96e60b..292a108 100644
  #if WITH_EDITOR
  	/** this is special flag to enable collision by default for components that are not Volume
  	 * currently only used by editor level viewport world, and do not use this for in-game scene
+diff --git a/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.cpp b/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.cpp
+index 44365fc..02d696b 100644
+--- a/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.cpp
++++ b/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.cpp
+@@ -1425,7 +1425,7 @@ bool UPrimitiveComponent::MoveComponentImpl( const FVector& Delta, const FQuat&
+ 				const float DeltaSize = FMath::Sqrt(DeltaSizeSq);
+ 				for(int32 HitIdx=0; HitIdx<Hits.Num(); HitIdx++)
+ 				{
+-					PullBackHit(Hits[HitIdx], TraceStart, TraceEnd, DeltaSize);
++					// PullBackHit(Hits[HitIdx], TraceStart, TraceEnd, DeltaSize);
+ 				}
+ 			}
  
 diff --git a/Engine/Source/Runtime/Engine/Private/LevelTick.cpp b/Engine/Source/Runtime/Engine/Private/LevelTick.cpp
 index de5b04e..1128afe 100644
@@ -51,6 +35,7 @@ index de5b04e..1128afe 100644
  	DeltaSeconds *= Info->GetEffectiveTimeDilation();
  	// Clamp time between 2000 fps and 2.5 fps.
 -	DeltaSeconds = FMath::Clamp(DeltaSeconds,0.0005f,0.40f);
++	//printf("DeltaSeconds: %g Min: %g Max: %g\n", DeltaSeconds, MinDeltaSeconds, MaxDeltaSeconds);
 +	DeltaSeconds = FMath::Clamp(DeltaSeconds, MinDeltaSeconds, MaxDeltaSeconds); 
  	DeltaTimeSeconds = DeltaSeconds;
  
