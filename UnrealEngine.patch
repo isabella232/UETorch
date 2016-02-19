@@ -17,12 +17,11 @@ diff --git a/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.
 index 44365fc..02d696b 100644
 --- a/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.cpp
 +++ b/Engine/Source/Runtime/Engine/Private/Components/PrimitiveComponent.cpp
-@@ -1425,7 +1425,7 @@ bool UPrimitiveComponent::MoveComponentImpl( const FVector& Delta, const FQuat&
+@@ -1425,7 +1425,6 @@ bool UPrimitiveComponent::MoveComponentImpl( const FVector& Delta, const FQuat&
  				const float DeltaSize = FMath::Sqrt(DeltaSizeSq);
  				for(int32 HitIdx=0; HitIdx<Hits.Num(); HitIdx++)
  				{
 -					PullBackHit(Hits[HitIdx], TraceStart, TraceEnd, DeltaSize);
-+					// PullBackHit(Hits[HitIdx], TraceStart, TraceEnd, DeltaSize);
  				}
  			}
  
@@ -30,13 +29,12 @@ diff --git a/Engine/Source/Runtime/Engine/Private/LevelTick.cpp b/Engine/Source/
 index de5b04e..1128afe 100644
 --- a/Engine/Source/Runtime/Engine/Private/LevelTick.cpp
 +++ b/Engine/Source/Runtime/Engine/Private/LevelTick.cpp
-@@ -1112,7 +1112,8 @@ void UWorld::Tick( ELevelTick TickType, float DeltaSeconds )
+@@ -1112,7 +1112,7 @@ void UWorld::Tick( ELevelTick TickType, float DeltaSeconds )
  	// apply time multipliers
  	DeltaSeconds *= Info->GetEffectiveTimeDilation();
  	// Clamp time between 2000 fps and 2.5 fps.
 -	DeltaSeconds = FMath::Clamp(DeltaSeconds,0.0005f,0.40f);
-+	//printf("DeltaSeconds: %g Min: %g Max: %g\n", DeltaSeconds, MinDeltaSeconds, MaxDeltaSeconds);
-+	DeltaSeconds = FMath::Clamp(DeltaSeconds, MinDeltaSeconds, MaxDeltaSeconds); 
++	DeltaSeconds = FMath::Clamp(DeltaSeconds, MinDeltaSeconds, MaxDeltaSeconds);
  	DeltaTimeSeconds = DeltaSeconds;
  
  	if ( !bIsPaused )
@@ -82,3 +80,32 @@ index f917903..84d2cba 100644
  	}
  
  }
+diff --git a/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs b/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs
+index 3f80999..ce02c6a 100644
+--- a/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs
++++ b/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs
+@@ -54,14 +54,14 @@ namespace UnrealBuildTool.Rules
+ 				);
+ 
+ 			var LuaPath = Path.Combine("..", "Plugins", "ScriptPlugin", "Source", "Lua");				
+-			var LuaLibDirectory = Path.Combine(LuaPath, "Lib", Target.Platform.ToString(), "Release");
+-			var LuaLibPath = Path.Combine(LuaLibDirectory, "Lua.lib");
++			var LuaLibDirectory = Path.Combine(LuaPath, "lua-5.2.4", "src");
++			var LuaLibPath = Path.Combine(LuaLibDirectory, "liblua.a");
+ 			if (File.Exists(LuaLibPath))
+ 			{					
+ 				Definitions.Add("WITH_LUA=1");
+ 
+ 				// Path to Lua include files
+-				var IncludePath = Path.GetFullPath(Path.Combine(LuaPath, "Include"));
++				var IncludePath = Path.GetFullPath(LuaLibDirectory);
+ 				PrivateIncludePaths.Add(IncludePath);
+ 
+ 				// Lib file
+@@ -76,4 +76,4 @@ namespace UnrealBuildTool.Rules
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

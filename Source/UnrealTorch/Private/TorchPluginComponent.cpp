@@ -9,7 +9,7 @@
 
 #include "UnrealTorchPrivatePCH.h"
 #include "ScriptBlueprintGeneratedClass.h"
-#include "LuaIntegration.h"
+#include "TorchContext.h"
 
 UTorchPluginComponent::UTorchPluginComponent(const FObjectInitializer& ObjectInitializer)
   : Super(ObjectInitializer)
@@ -36,7 +36,7 @@ void UTorchPluginComponent::OnRegister()
   if (GetWorld() && GetWorld()->WorldType != EWorldType::Editor)
   {
     FString InitStr = MakeLuaInitString();
-    Context = FTorchContext::CreateContext(InitStr, NULL, this);
+    Context = FTorchContext::Create(InitStr, this);
     if (!Context || !Context->CanTick())
     {
       bAutoActivate = false;

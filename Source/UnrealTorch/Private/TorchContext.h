@@ -9,27 +9,23 @@
 
 #pragma once
 
-#include "LuaIntegration.h"
+#ifndef WITH_LUA
+#error "Lua was not installed."
+#endif
 
-#if WITH_LUA
+#include "LuaIntegration.h"
 
 class FTorchContext : public FLuaContext
 {
 protected:
 	lua_State * LuaState; // override, changing visibility from private
 
+public:
 	static FTorchContext* Create(const FString& SourceCode, UObject* Owner);
 
 	bool CallFunctionString(const FString& FunctionName, FString In, FString& Out);
-
-	// void BeginPlay();
-	// void Tick(float DeltaTime);
-	// void Destroy();
 };
 
-class FTorchUtils {
-	// static bool CallModuleFunction(lua_State* LuaState, const ANSICHAR* PackageName, const ANSICHAR* FunctionName);
+struct FTorchUtils {
 	static bool CallFunctionString(lua_State* LuaState, const ANSICHAR* FunctionName, const ANSICHAR* In, FString& Out);
 };
-
-#endif // WITH_LUA

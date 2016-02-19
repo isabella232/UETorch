@@ -8,7 +8,7 @@ cd $DIR/../ScriptPlugin/Source/Lua
 curl -R -O http://www.lua.org/ftp/lua-5.2.4.tar.gz
 tar zxf lua-5.2.4.tar.gz
 cd lua-5.2.4
-make linux test
+make CFLAGS='-fPIC' linux test
 
 echo "Patching UnrealEngine"
 cd $DIR/../../..

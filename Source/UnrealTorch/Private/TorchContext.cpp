@@ -11,8 +11,6 @@
 #include "ScriptBlueprintGeneratedClass.h"
 #include "TorchContext.h"
 
-#if WITH_LUA
-
 const ANSICHAR *UTPackage = "unrealtorch";
 
 
@@ -45,7 +43,7 @@ bool FTorchContext::CallFunctionString(const FString& FunctionName, FString In, 
 	bool bSuccess = FLuaUtils::DoesFunctionExist(LuaState, TCHAR_TO_ANSI(*FunctionName));
 	if (bSuccess)
 	{
-		bSuccess = FLuaUtils::CallFunctionString(LuaState, TCHAR_TO_ANSI(*FunctionName), TCHAR_TO_ANSI(*In), Out);
+		bSuccess = FTorchUtils::CallFunctionString(LuaState, TCHAR_TO_ANSI(*FunctionName), TCHAR_TO_ANSI(*In), Out);
 	}
 	else
 	{
@@ -54,48 +52,6 @@ bool FTorchContext::CallFunctionString(const FString& FunctionName, FString In, 
 
 	return bSuccess;
 }
-
-// void FTorchContext::BeginPlay()
-// {
-// 	check(LuaState);
-// 	if (bHasBeginPlay)
-// 	{
-// 		FLuaUtils::CallModuleFunction(LuaState, UTPackage, "BeginPlay");
-// 	}
-// }
-
-// void FTorchContext::Tick(float DeltaTime)
-// {
-// 	check(LuaState && bHasTick);
-// 	if (bHasTick) {
-// 		// const ANSICHAR* FunctionName = "Tick";
-// 		// lua_getglobal(LuaState, UTPackage);
-// 		// lua_getfield(LuaState, -1, FunctionName);
-// 		lua_getglobal(LuaState, FunctionName);
-// 		lua_pushnumber(LuaState, DeltaTime);
-// 		const int NumArgs = 1;
-// 		const int NumResults = 0;
-// 		if (lua_pcall(LuaState, NumArgs, NumResults, 0) != 0)
-// 		{
-// 			UE_LOG(LogScriptPlugin, Warning, TEXT("Cannot call Lua function %s: %s"), ANSI_TO_TCHAR(FunctionName), ANSI_TO_TCHAR(lua_tostring(LuaState, -1)));
-// 		}
-// 		lua_pop(LuaState, 1);
-// 	}
-// }
-
-// void FLuaContext::Destroy()
-// {
-// 	if (LuaState)
-// 	{
-// 		if (bHasDestroy)
-// 		{
-// 			FLuaUtils::CallFunction(LuaState, "Destroy");
-
-// 		}
-
-// 		CloseLua();
-// 	}
-// }
 
 bool FTorchUtils::CallFunctionString(lua_State* LuaState, const ANSICHAR* FunctionName, const ANSICHAR* In, FString& Out)
 {
@@ -118,9 +74,5 @@ bool FTorchUtils::CallFunctionString(lua_State* LuaState, const ANSICHAR* Functi
 	}
 	Out = lua_tostring(LuaState, -1);
 	lua_pop(LuaState, 1);
-	// int topEnd = lua_gettop(LuaState);
-	// UE_LOG(LogScriptPlugin, Log, TEXT("%s gettop %d %d"), ANSI_TO_TCHAR(FunctionName), topBegin, topEnd);
 	return bResult;
 }
-
-#endif // WITH_LUA

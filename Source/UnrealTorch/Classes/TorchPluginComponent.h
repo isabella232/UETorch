@@ -10,7 +10,7 @@
 #pragma once
 #include "TorchPluginComponent.generated.h"
 
-class FScriptContextBase;
+class FTorchContext;
 
 /**
  * UnrealTorch script component.
@@ -62,7 +62,7 @@ protected:
   FString MakeLuaInitString();
 
   /** Script context (code) */
-  FScriptContextBase* Context;
+  FTorchContext* Context;
 };
 
 
