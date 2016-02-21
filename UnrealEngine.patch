@@ -109,3 +109,31 @@ index 3f80999..ce02c6a 100644
 -}
 \ No newline at end of file
 +}
+diff --git a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp
+index 977d885..612482f 100644
+--- a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp
++++ b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformProcess.cpp
+@@ -16,14 +16,15 @@ void* FLinuxPlatformProcess::GetDllHandle( const TCHAR* Filename )
+ 	FString AbsolutePath = FPaths::ConvertRelativePathToFull(Filename);
+ 
+ 	int DlOpenMode = RTLD_LAZY;
+-	if (AbsolutePath.EndsWith(TEXT("libsteam_api.so")))
+-	{
+-		DlOpenMode |= RTLD_GLOBAL; //Global symbol resolution when loading shared objects - Needed for Steam to work when its library is loaded by a plugin
+-	}
+-	else
+-	{
+-		DlOpenMode |= RTLD_LOCAL; //Local symbol resolution when loading shared objects - Needed for Hot-Reload
+-	}
++	// if (AbsolutePath.EndsWith(TEXT("libsteam_api.so")))
++	// {
++	// 	DlOpenMode |= RTLD_GLOBAL; //Global symbol resolution when loading shared objects - Needed for Steam to work when its library is loaded by a plugin
++	// }
++	// else
++	// {
++	// 	DlOpenMode |= RTLD_LOCAL; //Local symbol resolution when loading shared objects - Needed for Hot-Reload
++	// }
++	DlOpenMode |= RTLD_GLOBAL;
+ 
+ 	void *Handle = dlopen( TCHAR_TO_ANSI(*AbsolutePath), DlOpenMode );
+ 	if (!Handle)
