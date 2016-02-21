@@ -19,12 +19,12 @@ UnrealTorch requires or works with
  ```bash
  git clone https://github.com/EpicGames/UnrealEngine.git
  cd UnrealEngine
- # UnrealTorch was written for UnrealEngine-4.8
- git checkout 4.8
  ./Setup.sh && ./GenerateProjectFiles.sh 
  
  # clone UnrealTorch into the plugins directory
  git clone https://github.com/facebook/UnrealTorch.git Engine/Plugins/UnrealTorch
+ # run the UnrealTorch setup script
+ # this will update you to a specific revision on UnrealEngine-4.8, and install Lua inside UE
  Engine/Plugins/UnrealTorch/Setup.sh
  
  # grab some coffee, this will take a long time
