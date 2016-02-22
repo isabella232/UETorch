@@ -137,3 +137,16 @@ index 977d885..612482f 100644
  
  	void *Handle = dlopen( TCHAR_TO_ANSI(*AbsolutePath), DlOpenMode );
  	if (!Handle)
+diff --git a/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/Private/ScriptPlugin.cpp b/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/Private/ScriptPlugin.cpp
+index 1c4fe64..ec6d75e 100644
+--- a/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/Private/ScriptPlugin.cpp
++++ b/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/Private/ScriptPlugin.cpp
+@@ -16,7 +16,7 @@ UProperty* FindScriptPropertyHelper(UClass* Class, FName PropertyName)
+ 	return NULL;
+ }
+ 
+-#if 0
++#if WITH_LUA
+ #include "GeneratedScriptLibraries.inl"
+ #endif 
+ 
