@@ -1,14 +1,11 @@
 
 # UnrealTorch
-UnrealTorch is a ... and solves ...
-
-## Examples
-...
+UnrealTorch is an [Unreal Engine 4](http://www.unrealengine.com) plugin that adds support for embedded Lua/Torch scripts in the game engine loop, and a set of Lua APIs for providing user input, taking screenshots and segmentation masks, controlling game state, running faster than real time, etc.
+UnrealTorch strongly leverages the sparsely documented [ScriptPlugin](https://forums.unrealengine.com/showthread.php?3958-Scripting-Language-extensions-via-plugins) plugin provided with Unreal Engine 4.
 
 ## Requirements
-UnrealTorch requires or works with
-* Mac OS X or Linux
-* ...
+See the [Unreal Engine 4 Requirements](https://docs.unrealengine.com/latest/INT/GettingStarted/RecommendedSpecifications/).
+UnrealTorch was developed for Linux; see [Building Unreal Engine on Linux](https://wiki.unrealengine.com/Building_On_Linux#Prerequisites). Running on Mac and Windows is not currently supported, but should be relatively straightforward if you're willing to figure out the build process.
 
 
 ## Installing UnrealTorch
@@ -19,7 +16,6 @@ UnrealTorch requires or works with
  ```bash
  git clone https://github.com/EpicGames/UnrealEngine.git
  cd UnrealEngine
- ./Setup.sh && ./GenerateProjectFiles.sh 
  
  # clone UnrealTorch into the plugins directory
  git clone https://github.com/facebook/UnrealTorch.git Engine/Plugins/UnrealTorch
@@ -28,18 +24,21 @@ UnrealTorch requires or works with
  Engine/Plugins/UnrealTorch/Setup.sh
  
  # grab some coffee, this will take a long time
- make
+ ./Setup.sh && ./GenerateProjectFiles.sh && make
  ```
 5. Profit!
 
 ## Getting Started with UnrealTorch
 
-1. source Engine/Plugins/UnrealTorch/unrealtorch\_activate.sh
+1. Source the `unrealtorch_activate.sh` script. You might want to add this to your `.bashrc`.
+ ```bash
+source Engine/Plugins/UnrealTorch/unrealtorch_activate.sh
+```
 
-2. Launch Unreal Engine 
+2. Launch Unreal Editor 
  ```bash
  cd Engine/Binaries/Linux
- ./UE4Engine
+ ./UE4Editor
  ```
 
 3. Create a new 'First Person' project. 
@@ -50,24 +49,26 @@ UnrealTorch requires or works with
 
  Inside the window that pops up, click 'Add Component, and select 'Torch Plugin'. This will add a Torch Plugin component to FirstPersonCharacter.
  ![Add a Torch Plugin Component](Resources/Screenshots/fpc.png)
-
-5. Now we just need to set the module name for the UnrealTorch script that the component will run. We'll use the example script in UnrealTorch/Scripts/unrealtorch\_example.lua. The unrealtorch\_activate.sh script already added UnrealTorch/Scripts to our path, so if we got back to the World Outliner, we can just set the 'Main Module' field on the TorchPlugin to 'unrealtorch\_example'.
+ Then close the FirstPersonCharacter window.
+ 
+5. Now we just need to tell the UnrealTorch component which script to run. We'll use the example script in [UnrealTorch/Scripts/unrealtorch\_example.lua](Scripts/unrealtorch_example.lua). Just set the 'Main Module' field on the TorchPlugin to 'unrealtorch\_example'. (If you sourced unrealtorch\_activate.sh, then UnrealTorch/Scripts should already be on your LUA_PATH).
  ![Set the 'Main Module' field to unrealtorch\_example](Resources/Screenshots/torchplugin_module.png)
 
-6. The interactive Torch REPL won't work inside this editor process because it is a child process with no attached TTY. Go to File->Open Project, check 'Always load last project on startup', and select your project. Then restart UE4Editor, and your project should load.
-7. Press the 'Play' button. The game should freeze and you will notice that on the command line you have a torch prompt. That's because the example called `start_repl()` in the initialization function. You can type `break` to exit the REPL. The player will now move towards the cubes, based on the simple tick function inside unrealtorch\_example.lua. Go take a look at that script now.
-8. You may want to call a Lua function from inside Unreal Engine's [Blueprints scripting language](https://docs.unrealengine.com/latest/INT/Engine/Blueprints/index.html). Lets see how to do that now. We'll add a routine to the 'level blueprint' that calls into Lua when you press a key. Open the level blueprint (from the Blueprints menu). Right click in the main window to add a new widget, uncheck 'Context Sensitive', and search for 'Call TorchFunction String'. This function takes a (global) Lua function name, and a string input, and returns a string output (your function must have string input/output -- you can add other blueprints function signatures yourself in the C++ code). You can then drag your FirstPersonCharacter into the blueprint and hook up its TorchPlugin component as the target. Read the [Blueprints documentation](https://docs.unrealengine.com/latest/INT/Engine/Blueprints/index.html) for more details. Here's what the final blueprint should look like
+6. Press the 'Play' button. The player should move towards the cubes, based on the simple tick function inside [unrealtorch\_example.lua](Scripts/unrealtorch_example.lua). Go take a look at that script now. You can exit the game by pressing the 'Esc' key.
+7. You can call a Lua function from inside Unreal Engine's [Blueprints scripting language](https://docs.unrealengine.com/latest/INT/Engine/Blueprints/index.html). We'll add a routine to the 'level blueprint' that calls into Lua and starts the REPL when you press the 'H' key, which will allow you to run the Lua interpreter interactively inside a game. Open the level blueprint (from the Blueprints menu). Right click in the main window to add a new widget, uncheck 'Context Sensitive', and search for 'Call TorchFunction'. This widget just calls a Lua function with no input or output (only void -> void and string -> string widgets are provided; you can write your own as well). You can then drag your FirstPersonCharacter into the blueprint and hook it up as the target to the widget. Read the [Blueprints documentation](https://docs.unrealengine.com/latest/INT/Engine/Blueprints/index.html) for more details. Here's what the final blueprint should look like
  ![The final blueprint](Resources/Screenshots/torch_bp.png)
+8. The interactive Torch REPL won't work inside this editor process because it is a child process with no attached TTY. In the main Editor window, go to File->Open Project, check 'Always load last project on startup', and then close the window. Then restart UE4Editor, and it should directly load your Project.
+9. Now press 'Play' again, and press the 'H' key. The game should freeze and you will enter the Torch REPL inside of your terminal.
 
 ## Full documentation
 To learn how to develop Unreal Engine projects, see the Unreal Engine documentation at https://docs.unrealengine.com/latest/INT/.
 
-In-line documentation for the APIs provided by UnrealTorch can be found in UnrealTorch/Scripts/unrealtorch.lua.
+In-line documentation for the APIs provided by UnrealTorch can be found in [unrealtorch.lua](Scripts/unrealtorch.lua).
 
 More coming soon.
 
 ## Join the UnrealTorch community
-TODO
+See the CONTRIBUTING file for how to help out.
 
 ## License
 UnrealTorch is BSD-licensed. We also provide an additional patent grant.
