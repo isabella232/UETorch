@@ -61,8 +61,6 @@ namespace UnrealBuildTool.Rules
         }
         );
 
-      // from https://answers.unrealengine.com/questions/258689/how-to-include-private-header-files-of-other-modul.html
-
       // Get the engine path. Ends with "Engine/"
       string engine_path = Path.GetFullPath(BuildConfiguration.RelativeEnginePath);
 
@@ -71,7 +69,7 @@ namespace UnrealBuildTool.Rules
       PublicIncludePaths.Add(Path.Combine(script_plugin_src_path, "ScriptPlugin", "Private"));
       PublicIncludePaths.Add(Path.Combine(script_plugin_src_path, "ScriptPlugin", "Public"));
       PublicIncludePaths.Add(Path.Combine(script_plugin_src_path, "ScriptPlugin", "Classes"));
-      PublicIncludePaths.Add(Path.Combine(script_plugin_src_path, "Lua", "lua-5.2.4", "src"));
+      PublicIncludePaths.Add(Path.Combine(script_plugin_src_path, "Lua", "install", "include"));
 
       // string scripts_path = Path.GetFullPath( "Scripts" );
       // Definitions.Add("UNREALTORCH_SCRIPTS_DIR=" + scripts_path);

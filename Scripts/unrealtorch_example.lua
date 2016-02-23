@@ -22,8 +22,12 @@ function M.initialize()
    print("At each tick, this script captures a small segmentation mask of all")
    print("the cubes. At each tick, if there's a cube in the vertical center line,")
    print("it moves forward; otherwise, it turns left.")
+   print("The game will run at exactly 32 frames per game second,")
+   print("so it may run in faster than real time.")
    print("")
+end
 
+function my_repl()
    print("Type `go(5)` to run for 5 seconds and drop back into the REPL")
    print("or type break to leave the REPL. You can uncomment `start_repl()`")
    print("in this script to get rid of the REPL altogether.")
@@ -32,6 +36,7 @@ function M.initialize()
    print("")
    start_repl()
 end
+
 local cubes = {}
 for i = 1, 11 do
    cubes[i] = GetActor(string.format('Cube%02d', i))
