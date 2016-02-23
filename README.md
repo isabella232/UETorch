@@ -1,14 +1,11 @@
 
 # UnrealTorch
-UnrealTorch is a ... and solves ...
-
-## Examples
-...
+UnrealTorch is an [Unreal Engine 4](http://www.unrealengine.com) plugin that adds support for embedded Lua/Torch scripts in the game engine loop, and a set of Lua APIs for providing user input, taking screenshots and segmentation masks, controlling game state, running faster than real time, etc.
+UnrealTorch strongly leverages the sparsely documented [ScriptPlugin](https://forums.unrealengine.com/showthread.php?3958-Scripting-Language-extensions-via-plugins) plugin provided with Unreal Engine 4.
 
 ## Requirements
-UnrealTorch requires or works with
-* Mac OS X or Linux
-* ...
+See the [Unreal Engine 4 Requirements](https://docs.unrealengine.com/latest/INT/GettingStarted/RecommendedSpecifications/).
+UnrealTorch was developed for Linux; see [Building Unreal Engine on Linux](https://wiki.unrealengine.com/Building_On_Linux#Prerequisites). Running on Mac and Windows is not currently supported, but should be relatively straightforward if you're willing to figure out the build process.
 
 
 ## Installing UnrealTorch
@@ -19,7 +16,6 @@ UnrealTorch requires or works with
  ```bash
  git clone https://github.com/EpicGames/UnrealEngine.git
  cd UnrealEngine
- ./Setup.sh && ./GenerateProjectFiles.sh 
  
  # clone UnrealTorch into the plugins directory
  git clone https://github.com/facebook/UnrealTorch.git Engine/Plugins/UnrealTorch
@@ -28,7 +24,7 @@ UnrealTorch requires or works with
  Engine/Plugins/UnrealTorch/Setup.sh
  
  # grab some coffee, this will take a long time
- make
+ ./Setup.sh && ./GenerateProjectFiles.sh && make
  ```
 5. Profit!
 
@@ -67,7 +63,7 @@ In-line documentation for the APIs provided by UnrealTorch can be found in Unrea
 More coming soon.
 
 ## Join the UnrealTorch community
-TODO
+See the CONTRIBUTING file for how to help out.
 
 ## License
 UnrealTorch is BSD-licensed. We also provide an additional patent grant.
