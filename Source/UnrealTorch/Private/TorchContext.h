@@ -18,8 +18,6 @@
 class FTorchContext : public FLuaContext
 {
 protected:
-	lua_State * LuaState; // override, changing visibility from private
-  bool        bHasTick; // override, changing visibility from private
 
 public:
 	static FTorchContext* Create(const FString& SourceCode, UObject* Owner);

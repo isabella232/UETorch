@@ -58,7 +58,7 @@ AddHook(ExampleTickHandler)
 -- https://docs.unrealengine.com/latest/INT/Engine/Blueprints/index.html
 -------------------------------------------------------------------------------
 function ExampleScriptFunction(x)
-   print("Script Function called with x= " .. x)
+   return "Script Function called with x= " .. x
 end
 
 return M
