@@ -58,7 +58,7 @@ UnrealTorch was developed for Linux; see [Building Unreal Engine on Linux](https
 ## Full documentation
 To learn how to develop Unreal Engine projects, see the Unreal Engine documentation at https://docs.unrealengine.com/latest/INT/.
 
-In-line documentation for the APIs provided by UnrealTorch can be found in [unrealtorch.lua](blob/master/Scripts/unrealtorch.lua).
+In-line documentation for the APIs provided by UnrealTorch can be found in [unrealtorch.lua](Scripts/unrealtorch.lua).
 
 More coming soon.
 
