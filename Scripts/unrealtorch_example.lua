@@ -23,11 +23,13 @@ function M.initialize()
    print("the cubes. At each tick, if there's a cube in the vertical center line,")
    print("it moves forward; otherwise, it turns left.")
    print("")
+
    print("Type `go(5)` to run for 5 seconds and drop back into the REPL")
    print("or type break to leave the REPL. You can uncomment `start_repl()`")
    print("in this script to get rid of the REPL altogether.")
+   print("NOTE: Make sure to check 'Always load last project on startup' in the")
+   print("project selector and restart, or the REPL won't work.")
    print("")
-
    start_repl()
 end
 local cubes = {}
