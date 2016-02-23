@@ -30,12 +30,15 @@ UnrealTorch was developed for Linux; see [Building Unreal Engine on Linux](https
 
 ## Getting Started with UnrealTorch
 
-1. source Engine/Plugins/UnrealTorch/unrealtorch\_activate.sh
+1. Source the `unrealtorch_activate.sh` script. You might want to add this to your `.bashrc`.
+ ```bash
+source Engine/Plugins/UnrealTorch/unrealtorch_activate.sh
+```
 
-2. Launch Unreal Engine 
+2. Launch Unreal Editor 
  ```bash
  cd Engine/Binaries/Linux
- ./UE4Engine
+ ./UE4Editor
  ```
 
 3. Create a new 'First Person' project. 
