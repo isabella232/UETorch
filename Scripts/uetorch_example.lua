@@ -6,7 +6,7 @@
 -- of patent rights can be found in the PATENTS file in the same directory.
 -------------------------------------------------------------------------------
 
-require 'unrealtorch'
+require 'uetorch'
 
 local M = {}
 
@@ -18,7 +18,7 @@ function M.initialize()
    -- this will only work if UnrealEngine.patch has been applied
    local succ = SetTickDeltaBounds(1/32,1/32)
 
-   print("\n-- UnrealTorch example --\n")
+   print("\n-- UETorch example --\n")
    print("At each tick, this script captures a small segmentation mask of all")
    print("the cubes. At each tick, if there's a cube in the vertical center line,")
    print("it moves forward; otherwise, it turns left.")

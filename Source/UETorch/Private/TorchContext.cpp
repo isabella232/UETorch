@@ -7,11 +7,11 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#include "UnrealTorchPrivatePCH.h"
+#include "UETorchPrivatePCH.h"
 #include "ScriptBlueprintGeneratedClass.h"
 #include "TorchContext.h"
 
-const ANSICHAR *UTPackage = "unrealtorch";
+const ANSICHAR *UTPackage = "uetorch";
 
 
 FTorchContext* FTorchContext::Create(const FString& SourceCode, UObject* Owner)

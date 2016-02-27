@@ -16,7 +16,7 @@
  * The public interface to this module.  In most cases, this interface is only public to sibling modules
  * within this plugin.
  */
-class IUnrealTorch : public IModuleInterface
+class IUETorch : public IModuleInterface
 {
 
 public:
@@ -27,9 +27,9 @@ public:
 	 *
 	 * @return Returns singleton instance, loading the module on demand if needed
 	 */
-	static inline IUnrealTorch& Get()
+	static inline IUETorch& Get()
 	{
-		return FModuleManager::LoadModuleChecked< IUnrealTorch >( "UnrealTorch" );
+		return FModuleManager::LoadModuleChecked< IUETorch >( "UETorch" );
 	}
 
 	/**
@@ -39,7 +39,7 @@ public:
 	 */
 	static inline bool IsAvailable()
 	{
-		return FModuleManager::Get().IsModuleLoaded( "UnrealTorch" );
+		return FModuleManager::Get().IsModuleLoaded( "UETorch" );
 	}
 };
 

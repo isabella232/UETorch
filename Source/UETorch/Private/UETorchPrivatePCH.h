@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "IUnrealTorch.h"
+#include "IUETorch.h"
 #include "CoreUObject.h"
 #include "ModuleManager.h"
 #include "Engine.h"

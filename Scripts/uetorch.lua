@@ -6,11 +6,11 @@
 -- of patent rights can be found in the PATENTS file in the same directory.
 -------------------------------------------------------------------------------
 
--- UnrealTorch lua library
-print("Importing unrealtorch.lua ...")
+-- UETorch lua library
+print("Importing uetorch.lua ...")
 
 -------------------------------------------------------------------------------
--- Lua ffi wrappers for UnrealTorch C functions
+-- Lua ffi wrappers for UETorch C functions
 -------------------------------------------------------------------------------
 ffi = require 'ffi'
 require 'torch'
@@ -42,7 +42,7 @@ local utlib = ffi.C
 -------------------------------------------------------------------------------
 -- REPL
 --
--- start_repl() can be called from within an UnrealTorch script directly,
+-- start_repl() can be called from within an UETorch script directly,
 -- or can be triggered (e.g. by a keypress) by setting up a blueprint event handler.
 --
 -- The REPL can be exited by typing `break`,

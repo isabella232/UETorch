@@ -7,7 +7,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#include "UnrealTorchPrivatePCH.h"
+#include "UETorchPrivatePCH.h"
 #include "ScriptBlueprintGeneratedClass.h"
 #include "TorchContext.h"
 
@@ -23,7 +23,7 @@ UTorchPluginComponent::UTorchPluginComponent(const FObjectInitializer& ObjectIni
 }
 
 FString UTorchPluginComponent::MakeLuaInitString() {
-  FString InitStr = "require 'unrealtorch';"                 // FIXME: use local unrealtorch package
+  FString InitStr = "require 'uetorch';"                 // FIXME: use local uetorch package
                     "local _main = require '" + MainModule + "';"
                     "if type(_main)=='table' and _main.initialize then _main.initialize() end";
   return InitStr;

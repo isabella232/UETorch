@@ -1,5 +1,5 @@
 
-# Contributing to UnrealTorch
+# Contributing to UETorch
 We want to make contributing to this project as easy and transparent as
 possible.
 
@@ -29,5 +29,5 @@ outlined on that page and do not file a public issue.
 * 80 character line length
 
 ## License
-By contributing to UnrealTorch, you agree that your contributions will be licensed
+By contributing to UETorch, you agree that your contributions will be licensed
 under its BSD license.

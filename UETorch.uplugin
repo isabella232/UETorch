@@ -2,16 +2,16 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "UnrealTorch",
+	"FriendlyName": "UETorch",
 	"Description": "Torch integration with UnrealEngine",
 	"Category": "Machine Learning",
 	"CreatedBy": "Facebook, Inc.",
-	"CreatedByURL": "http://github.com/facebook/UnrealTorch",
+	"CreatedByURL": "http://github.com/facebook/UETorch",
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"Modules": [
 		{
-			"Name": "UnrealTorch",
+			"Name": "UETorch",
 			"Type": "Developer",
 			"LoadingPhase": "PreDefault"
 		}

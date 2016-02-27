@@ -13,13 +13,13 @@
 class FTorchContext;
 
 /**
- * UnrealTorch script component.
+ * UETorch script component.
  * If this component is added to an Actor, the specified script will be
  * loaded on game start, and can register functions to be executed on each
  * iteration ('tick') of the game loop.
  */
 UCLASS(Blueprintable, ClassGroup = Script, hidecategories = (Activation, Collision), meta = (BlueprintSpawnableComponent))
-class UNREALTORCH_API UTorchPluginComponent : public UActorComponent
+class UETORCH_API UTorchPluginComponent : public UActorComponent
 {
   GENERATED_UCLASS_BODY()
 

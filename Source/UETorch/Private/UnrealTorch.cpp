@@ -7,31 +7,31 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#include "UnrealTorchPrivatePCH.h"
+#include "UETorchPrivatePCH.h"
 #include "TorchPluginComponent.h"
 #include <type_traits>
 
-class FUnrealTorch : public IUnrealTorch
+class FUETorch : public IUETorch
 {
   /** IModuleInterface implementation */
   virtual void StartupModule() override;
   virtual void ShutdownModule() override;
 };
 
-IMPLEMENT_MODULE(FUnrealTorch, UnrealTorch)
+IMPLEMENT_MODULE(FUETorch, UETorch)
 
-void FUnrealTorch::StartupModule()
+void FUETorch::StartupModule()
 {
-  printf("FUnrealTorch Startup\n");
+  printf("FUETorch Startup\n");
 }
 
-void FUnrealTorch::ShutdownModule()
+void FUETorch::ShutdownModule()
 {
 }
 
 /*************************************************************************
- * UnrealTorch helper functions
- * These are mapped to Lua through FFI in unrealtorch.lua
+ * UETorch helper functions
+ * These are mapped to Lua through FFI in uetorch.lua
  *************************************************************************/
 
 
@@ -80,7 +80,7 @@ bool SetTickDeltaBoundsInternal(WorldT* World, float MinDeltaSeconds, float MaxD
 template<typename WorldT>
 bool SetTickDeltaBoundsInternal(WorldT* World, float MinDeltaSeconds, float MaxDeltaSeconds, std::false_type)
 {
-  printf("You need to the patch file located at Engine/Plugins/UnrealTorch/UnrealEngine.patch\n");
+  printf("You need to the patch file located at Engine/Plugins/UETorch/UnrealEngine.patch\n");
   printf("and rebuild Unreal Engine for SetTickDeltaBounds to work\n");
   return false;
 }

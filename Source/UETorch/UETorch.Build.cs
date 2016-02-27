@@ -12,9 +12,9 @@ using UnrealBuildTool;
 
 namespace UnrealBuildTool.Rules
 {
-  public class UnrealTorch : ModuleRules
+  public class UETorch : ModuleRules
   {
-    public UnrealTorch(TargetInfo Target)
+    public UETorch(TargetInfo Target)
     {
       PublicIncludePaths.AddRange(
         new string[] {
@@ -24,7 +24,7 @@ namespace UnrealBuildTool.Rules
 
       PrivateIncludePaths.AddRange(
         new string[] {
-          // "UnrealTorch/Private"
+          // "UETorch/Private"
           // how about Lua?
           // ... add other private include paths required here ...
         }
@@ -72,7 +72,7 @@ namespace UnrealBuildTool.Rules
       PublicIncludePaths.Add(Path.Combine(script_plugin_src_path, "Lua", "install", "include"));
 
       // string scripts_path = Path.GetFullPath( "Scripts" );
-      // Definitions.Add("UNREALTORCH_SCRIPTS_DIR=" + scripts_path);
+      // Definitions.Add("UETORCH_SCRIPTS_DIR=" + scripts_path);
     }
   }
 }
