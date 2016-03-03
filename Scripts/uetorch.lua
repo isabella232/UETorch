@@ -28,9 +28,10 @@ struct AActor;
 
 void GetViewportSize(IntSize* r);
 bool CaptureScreenshot(IntSize* size, void* data);
-bool CaptureOpticalFlow(UObject* _this, const IntSize* size, void* flow_data, void* rgb_data, float maxFlow, int stride, bool verbose);
 bool CaptureSegmentation(UObject* _this, const IntSize* size, void* seg_data, int stride, const AActor** objects, int nObjects, bool verbose);
 bool CaptureMasks(UObject* _this, const IntSize* size, void* seg_data, int stride, const AActor** objects, int nObjects, bool verbose);
+bool CaptureOpticalFlow(UObject* _this, const IntSize* size, void* flow_data, void* rgb_data, float maxFlow, int stride, bool verbose);
+bool CaptureDepthField(UObject* _this, const IntSize* size, void* data, int stride, bool verbose);
 
 void PressKey(const char *key, int ControllerId, int eventType);
 bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float MaxDeltaSeconds);
@@ -360,4 +361,36 @@ function OpticalFlow(maxFlow, stride, verbose)
    rgb  = rgb:transpose(1,3):transpose(2,3)
 
    return flow, rgb
+end
+
+
+-- Capture the depth field at each pixel in the viewport.
+--
+-- Parameters:
+--     stride: stride in pixels at which to compute the depth field. (Default: 1)
+--     verbose: verbose output (Default: false)
+-- Returns:
+--     depth: A FloatTensor of size (Y/stride,X/stride) containing the 2D
+--            depth field at each point in the viewport.
+--
+function DepthField(stride, verbose)
+   stride = stride or 1
+   verbose = verbose or false
+   local size = ffi.new('IntSize[?]', 1)
+   utlib.GetViewportSize(size)
+
+   if size[0].X == 0 or size[0].Y == 0 then
+      print("ERROR: Screen not visible")
+      return nil
+   end
+
+   local depth = torch.FloatTensor(math.ceil(size[0].Y/stride),
+                   math.ceil(size[0].X/stride))
+
+   if not utlib.CaptureDepthField(this, size, depth:storage():cdata().data, stride, verbose) then
+      print("ERROR: Unable to capture depth field")
+      return nil
+   end
+
+   return depth
 end

@@ -577,3 +577,81 @@ extern "C" bool CaptureOpticalFlow(UObject* _this, const IntSize* size, void* fl
 }
 
 
+/**
+ * Calculate the depth field.
+ *
+ * @param _this the TorchPluginComponent
+ * @param size the size of the viewport.
+ * @param data a float array of size->Y/stride * size->X/stride
+ *             This array is filled with depth information.
+ * @param stride stride in pixels at which to compute the optical flow.
+ * @param verbose verbose output
+ * @returns true if the optical flow capture was successful
+ */
+extern "C" bool CaptureDepthField(UObject* _this, const IntSize* size, void* data, int stride, bool verbose)
+{
+  FViewport* Viewport = nullptr;
+  APlayerController* PlayerController = nullptr;
+  UWorld* World = nullptr;
+  FSceneView* SceneView = nullptr;
+
+  bool bOk = InitCapture(_this, size, &Viewport, &PlayerController, &World, &SceneView);
+  if(!bOk) {
+    return false;
+  }
+
+  ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(_this, 0);
+  if(PlayerCharacter == NULL) {
+    printf("PlayerCharacter null\n");
+    return false;
+  }
+
+  float HitResultTraceDistance = 100000.f;
+
+  FVector PlayerLoc  = PlayerCharacter->GetActorLocation();
+  FRotator PlayerRot = PlayerController->GetControlRotation();
+  FRotationMatrix PlayerRotMat(PlayerRot);
+
+  FVector PlayerF = PlayerRotMat.GetScaledAxis( EAxis::X );
+  PlayerF.Normalize();
+
+  FBodyInstance* PlayerBodyInst = GetBodyInstance(PlayerCharacter);
+  PlayerBodyInst->SetAngularVelocity(FVector(0,0,0), false); // FIXME
+
+  ECollisionChannel TraceChannel = ECollisionChannel::ECC_Visibility; // FIXME?
+  bool bTraceComplex = false; // FIXME?
+  FHitResult HitResult;
+  float* values = (float*) data;
+  FCollisionQueryParams CollisionQueryParams( "ClickableTrace", bTraceComplex );
+  for (int y = 0; y < size->Y; y+=stride) {
+    for (int x = 0; x < size->X; x+=stride) {
+
+      FVector2D ScreenPosition(x, y);
+
+      FVector WorldOrigin, WorldDirection;
+      FSceneView__SafeDeprojectFVector2D(SceneView, ScreenPosition, WorldOrigin, WorldDirection);
+
+      bool bHit = World->LineTraceSingleByChannel(
+          HitResult,
+          WorldOrigin,
+          WorldOrigin + WorldDirection * HitResultTraceDistance,
+          TraceChannel,
+          CollisionQueryParams);
+
+      AActor* Actor = NULL;
+      FVector CamVel, PointVel, Flow;
+
+      if(bHit) {
+        const auto &HitLoc = HitResult.Location;
+        Actor = HitResult.GetActor();
+
+        FVector HitLocRel = HitLoc - PlayerLoc;
+        float DistToHit = FVector::DotProduct(HitLoc - PlayerLoc, PlayerF);
+	*values++ = DistToHit;
+      } else {
+	*values++ = 0;
+      }
+    }
+  }
+  return true;
+}
