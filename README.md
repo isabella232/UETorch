@@ -1,7 +1,9 @@
 
 # UETorch
-UETorch is an [Unreal Engine 4](http://www.unrealengine.com) plugin that adds support for embedded Lua/Torch scripts in the game engine loop, and a set of Lua APIs for providing user input, taking screenshots and segmentation masks, controlling game state, running faster than real time, etc.
+UETorch is an [Unreal Engine 4](http://www.unrealengine.com) plugin that adds support for embedded [Lua/Torch](http://torch.ch/) scripts in the game engine loop, and a set of Lua APIs for providing user input, taking screenshots and segmentation masks, controlling game state, running faster than real time, etc. Torch is an AI Research platform that is focused on deep learning.
 UETorch strongly leverages the sparsely documented [ScriptPlugin](https://forums.unrealengine.com/showthread.php?3958-Scripting-Language-extensions-via-plugins) plugin provided with Unreal Engine 4.
+
+Some recent research done using the UETorch platform is detailed in this paper ["Learning Physical Intuition of Block Towers by Example"](http://arxiv.org/abs/1603.01312) where we explore the ability of deep feed-forward models to learn intuitive physics.
 
 ## Requirements
 See the [Unreal Engine 4 Requirements](https://docs.unrealengine.com/latest/INT/GettingStarted/RecommendedSpecifications/).
