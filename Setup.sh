@@ -1,16 +1,27 @@
 #!/bin/bash
-# set -e
+set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+if git rev-parse 4.8-UETorch > /dev/null 2>&1; then
+  if [ $(git rev-parse 4.8-UETorch^1) != $(git rev-parse 4.8) ]; then
+    echo "git branch 4.8-UETorch already exists and has your commits on it. If you really want to re-run setup, you'll need to clean up and delete this branch yourself."
+    exit 1
+  fi
+  git checkout 4.8
+  git branch -D 4.8-UETorch
+fi
+
 echo "=== Checking out the baseline UE4 commit... ==="
 git checkout 4.8
-#git checkout c4001bc95e3e6490c31f0d8dd0699ea2f22e3661
-#git checkout 648eec4314879fc6e2d7aea767fade0f9e446c36
 
 echo "=== Patching UE4 ==="
 cd $DIR/../../..
+git branch 4.8-UETorch
+git checkout 4.8-UETorch
 git apply $DIR/UnrealEngine.patch
+git add -u
+git commit -m "UETorch patches"
 
 echo "=== Setting up Lua... === "
 ### alternative approach: download lua-5.2.4
