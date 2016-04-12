@@ -118,6 +118,10 @@ typedef struct {
  */
 extern "C" void GetViewportSize(IntSize* r)
 {
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return;
+  }
   FViewport* Viewport = GEngine->GameViewport->Viewport;
   auto size = Viewport->GetSizeXY();
   r->X = size.X;
@@ -137,7 +141,13 @@ extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 {
   FlushRenderingCommands();
 
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return false;
+  }
+
   FViewport* Viewport = GEngine->GameViewport->Viewport;
+
   TArray<FColor> Bitmap;
 
   if (size->X != Viewport->GetSizeXY().X || size->Y != Viewport->GetSizeXY().Y) {
@@ -179,6 +189,11 @@ extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 // Looks up the player's SceneView object
 // modeled after APlayerController::GetHitResultAtScreenPosition
 FSceneView* GetSceneView(APlayerController* PlayerController, UWorld* World) {
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return NULL;
+  }
+
   auto Viewport = GEngine->GameViewport->Viewport;
 
   // Create a view family for the game viewport
@@ -215,6 +230,11 @@ void FSceneView__SafeDeprojectFVector2D(const FSceneView* SceneView, const FVect
 bool InitCapture(UObject* _this, const IntSize* size, FViewport** pViewport, APlayerController** pPlayerController, UWorld** pWorld, FSceneView** pSceneView)
 {
   FlushRenderingCommands();
+
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return false;
+  }
 
   *pViewport = GEngine->GameViewport->Viewport;
 
