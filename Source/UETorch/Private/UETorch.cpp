@@ -118,6 +118,14 @@ typedef struct {
  */
 extern "C" void GetViewportSize(IntSize* r)
 {
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return;
+  }
   if(GEngine->GameViewport->Viewport == NULL){
     printf("Viewport null\n");
     return;
@@ -141,13 +149,20 @@ extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 {
   FlushRenderingCommands();
 
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return false;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return false;
+  }
   if(GEngine->GameViewport->Viewport == NULL){
     printf("Viewport null\n");
     return false;
   }
 
   FViewport* Viewport = GEngine->GameViewport->Viewport;
-
   TArray<FColor> Bitmap;
 
   if (size->X != Viewport->GetSizeXY().X || size->Y != Viewport->GetSizeXY().Y) {
@@ -189,6 +204,14 @@ extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 // Looks up the player's SceneView object
 // modeled after APlayerController::GetHitResultAtScreenPosition
 FSceneView* GetSceneView(APlayerController* PlayerController, UWorld* World) {
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return NULL;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return NULL;
+  }
   if(GEngine->GameViewport->Viewport == NULL){
     printf("Viewport null\n");
     return NULL;
@@ -231,6 +254,14 @@ bool InitCapture(UObject* _this, const IntSize* size, FViewport** pViewport, APl
 {
   FlushRenderingCommands();
 
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return false;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return false;
+  }
   if(GEngine->GameViewport->Viewport == NULL){
     printf("Viewport null\n");
     return false;
