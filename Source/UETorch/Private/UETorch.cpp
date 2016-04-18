@@ -118,6 +118,18 @@ typedef struct {
  */
 extern "C" void GetViewportSize(IntSize* r)
 {
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return;
+  }
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return;
+  }
   FViewport* Viewport = GEngine->GameViewport->Viewport;
   auto size = Viewport->GetSizeXY();
   r->X = size.X;
@@ -136,6 +148,19 @@ extern "C" void GetViewportSize(IntSize* r)
 extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 {
   FlushRenderingCommands();
+
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return false;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return false;
+  }
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return false;
+  }
 
   FViewport* Viewport = GEngine->GameViewport->Viewport;
   TArray<FColor> Bitmap;
@@ -179,6 +204,19 @@ extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 // Looks up the player's SceneView object
 // modeled after APlayerController::GetHitResultAtScreenPosition
 FSceneView* GetSceneView(APlayerController* PlayerController, UWorld* World) {
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return NULL;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return NULL;
+  }
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return NULL;
+  }
+
   auto Viewport = GEngine->GameViewport->Viewport;
 
   // Create a view family for the game viewport
@@ -215,6 +253,19 @@ void FSceneView__SafeDeprojectFVector2D(const FSceneView* SceneView, const FVect
 bool InitCapture(UObject* _this, const IntSize* size, FViewport** pViewport, APlayerController** pPlayerController, UWorld** pWorld, FSceneView** pSceneView)
 {
   FlushRenderingCommands();
+
+  if(GEngine == NULL){
+    printf("GEngine null\n");
+    return false;
+  }
+  if(GEngine->GameViewport == NULL){
+    printf("GameViewport null\n");
+    return false;
+  }
+  if(GEngine->GameViewport->Viewport == NULL){
+    printf("Viewport null\n");
+    return false;
+  }
 
   *pViewport = GEngine->GameViewport->Viewport;
 
