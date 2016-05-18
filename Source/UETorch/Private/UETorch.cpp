@@ -58,14 +58,14 @@ void FUETorch::ShutdownModule()
 // This is an SFINAE check to see whether the patch has been applied.
 struct UWorldHasMinDeltaSeconds
 {
-		struct Fallback { int MinDeltaSeconds; }; 
-		struct Combined : UWorld, Fallback { };
-		template<typename U, U> struct SFINAE; 
+	struct Fallback { int MinDeltaSeconds; };
+	struct Combined : UWorld, Fallback { };
+	template<typename U, U> struct SFINAE;
 
-		template<typename U> static char f(SFINAE<int Fallback::*, &U::MinDeltaSeconds>*); 
-		template<typename U> static int f(...); 
+	template<typename U> static char f(SFINAE<int Fallback::*, &U::MinDeltaSeconds>*);
+	template<typename U> static int f(...);
 
-		static bool const value = sizeof(f<Combined>(0)) == sizeof(int);
+	static bool const value = sizeof(f<Combined>(0)) == sizeof(int);
 };
 
 
@@ -104,8 +104,8 @@ extern "C" bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float 
 		printf("World null\n");
 		return false;
 	}
-	return SetTickDeltaBoundsInternal(World, MinDeltaSeconds, MaxDeltaSeconds, 
-			std::integral_constant<bool, UWorldHasMinDeltaSeconds::value>());
+	return SetTickDeltaBoundsInternal(World, MinDeltaSeconds, MaxDeltaSeconds,
+		std::integral_constant<bool, UWorldHasMinDeltaSeconds::value>());
 }
 
 typedef struct {
@@ -225,7 +225,7 @@ FSceneView* GetSceneView(APlayerController* PlayerController, UWorld* World) {
 			Viewport,
 			World->Scene,
 			GEngine->GameViewport->EngineShowFlags )
-			.SetRealtimeUpdate(true) );
+		.SetRealtimeUpdate(true) );
 
 
 	// Calculate a view where the player is to update the streaming from the players start location
@@ -245,7 +245,7 @@ void FSceneView__SafeDeprojectFVector2D(const FSceneView* SceneView, const FVect
 {
 	const FMatrix InverseViewMatrix = SceneView->ViewMatrices.ViewMatrix.Inverse();
 	const FMatrix InvProjectionMatrix = SceneView->ViewMatrices.GetInvProjMatrix();
-	
+
 	SceneView->DeprojectScreenToWorld(ScreenPos, SceneView->UnscaledViewRect, InverseViewMatrix, InvProjectionMatrix, out_WorldOrigin, out_WorldDirection);
 }
 
@@ -328,7 +328,7 @@ extern "C" bool CaptureSegmentation(UObject* _this, const IntSize* size, void* s
 	ECollisionChannel TraceChannel = ECollisionChannel::ECC_Visibility;
 	bool bTraceComplex = false;
 	FHitResult HitResult;
-	int* seg_values    = (int*) seg_data;
+	int* seg_values = (int*) seg_data;
 
 	if(verbose) {
 		for(int i = 0; i < nObjects; i++) {
@@ -350,21 +350,21 @@ extern "C" bool CaptureSegmentation(UObject* _this, const IntSize* size, void* s
 			AActor* Actor = NULL;
 			*seg_values = 0; // no foreground object
 			if(bHit) {
-			  Actor = HitResult.GetActor();
-			  if(Actor != NULL)
-			  {
-			    for (int i = 0; i < nObjects; i++) {
-			      if (objects[i] == Actor) {
-			        *seg_values = i+1;
-			        break;
-			      }
-			    }
-			  }
+				Actor = HitResult.GetActor();
+				if(Actor != NULL)
+				{
+					for (int i = 0; i < nObjects; i++) {
+						if (objects[i] == Actor) {
+							*seg_values = i+1;
+							break;
+						}
+					}
+				}
 			}
 
 			if(verbose) {
-			  printf("(%d, %d) Actor: %p Seg: %d bHit: %d\n",
-			      x, y, Actor, *seg_values, bHit);
+				printf("(%d, %d) Actor: %p Seg: %d bHit: %d\n",
+					x, y, Actor, *seg_values, bHit);
 			}
 			seg_values++;
 		}
@@ -403,7 +403,7 @@ extern "C" bool CaptureMasks(UObject* _this, const IntSize* size, void* seg_data
 	ECollisionChannel TraceChannel = ECollisionChannel::ECC_Visibility;
 	bool bTraceComplex = false;
 	TArray<struct FHitResult> HitResults;
-	char* seg_values    = (char*) seg_data;
+	char* seg_values = (char*) seg_data;
 
 	if(verbose) {
 		for(int i = 0; i < nObjects; i++) {
@@ -433,18 +433,18 @@ extern "C" bool CaptureMasks(UObject* _this, const IntSize* size, void* seg_data
 			bool bHit = World->LineTraceMultiByChannel(HitResults, WorldOrigin, WorldOrigin + WorldDirection * HitResultTraceDistance, (ECollisionChannel) 0, CollisionQueryParams, FCollisionResponseParams(ECR_Overlap));
 
 			for (int i = 0; i < nObjects; i++) {
-			  *seg_values = 0;
-			  for(int h = 0; h < HitResults.Num(); h++) {
-			    Actor = HitResults[h].GetActor();
-			    if (Actor == objects[i]) {
-			      if(verbose) {
-			        printf("  >> %d %d %d %d %p %p\n", x, y, i, h, Actor, objects[i]);
-			      }
-			      *seg_values = 1;
-			      break;
-			    }
-			  }
-			  seg_values++;
+				*seg_values = 0;
+				for(int h = 0; h < HitResults.Num(); h++) {
+					Actor = HitResults[h].GetActor();
+					if (Actor == objects[i]) {
+						if(verbose) {
+							printf("  >> %d %d %d %d %p %p\n", x, y, i, h, Actor, objects[i]);
+						}
+						*seg_values = 1;
+						break;
+					}
+				}
+				seg_values++;
 			}
 		}
 	}
@@ -556,39 +556,39 @@ extern "C" bool CaptureOpticalFlow(UObject* _this, const IntSize* size, void* fl
 
 			// 4. Cast ray from pixel to find intersecting object
 			bool bHit = World->LineTraceSingleByChannel(
-			    HitResult,
-			    WorldOrigin,
-			    WorldOrigin + WorldDirection * HitResultTraceDistance,
-			    TraceChannel,
-			    CollisionQueryParams);
+				HitResult,
+				WorldOrigin,
+				WorldOrigin + WorldDirection * HitResultTraceDistance,
+				TraceChannel,
+				CollisionQueryParams);
 
 			AActor* Actor = NULL;
 			FVector CamVel, PointVel, Flow;
 
 			if(bHit) {
-			  // 5. Get the location and velocity of the camera and the hit object
-			  const auto &HitLoc = HitResult.Location;
-			  Actor = HitResult.GetActor();
-			  FBodyInstance* ActorBodyInst = GetBodyInstance(Actor);
-			  if(ActorBodyInst != NULL)
-			  {
-			    PointVel = ActorBodyInst->GetUnrealWorldVelocityAtPoint(HitLoc);
-			  } else {
-			    printf("BodyInst null\n");
-			    PointVel = Actor->GetVelocity();
-			  }
-			  CamVel = PlayerBodyInst->GetUnrealWorldVelocityAtPoint(HitLoc);
-			  FVector RelVel = PointVel - CamVel;
+				// 5. Get the location and velocity of the camera and the hit object
+				const auto &HitLoc = HitResult.Location;
+				Actor = HitResult.GetActor();
+				FBodyInstance* ActorBodyInst = GetBodyInstance(Actor);
+				if(ActorBodyInst != NULL)
+				{
+					PointVel = ActorBodyInst->GetUnrealWorldVelocityAtPoint(HitLoc);
+				} else {
+					printf("BodyInst null\n");
+					PointVel = Actor->GetVelocity();
+				}
+				CamVel = PlayerBodyInst->GetUnrealWorldVelocityAtPoint(HitLoc);
+				FVector RelVel = PointVel - CamVel;
 
-			  // 6. calculate the optical flow
-			  FVector HitLocRel = HitLoc - PlayerLoc;
-			  float DistToHit = FVector::DotProduct(HitLoc - PlayerLoc, PlayerF);
-			  FVector RelVelInCameraPlane = (RelVel - RelVel.ProjectOnTo(PlayerF)) / DistToHit;
-			  Flow.X = FVector::DotProduct(RelVelInCameraPlane, ScreenDx);
-			  Flow.Y = FVector::DotProduct(RelVelInCameraPlane, ScreenDy);
+				// 6. calculate the optical flow
+				FVector HitLocRel = HitLoc - PlayerLoc;
+				float DistToHit = FVector::DotProduct(HitLoc - PlayerLoc, PlayerF);
+				FVector RelVelInCameraPlane = (RelVel - RelVel.ProjectOnTo(PlayerF)) / DistToHit;
+				Flow.X = FVector::DotProduct(RelVelInCameraPlane, ScreenDx);
+				Flow.Y = FVector::DotProduct(RelVelInCameraPlane, ScreenDy);
 			} else {
-			  Flow.X  = 0;
-			  Flow.Y  = 0;
+				Flow.X  = 0;
+				Flow.Y  = 0;
 			}
 
 			*flow_values++ = Flow.X;
@@ -610,17 +610,17 @@ extern "C" bool CaptureOpticalFlow(UObject* _this, const IntSize* size, void* fl
 			*rgb_values++ = color.B;
 
 			if(verbose) {
-			  printf("(%d, %d) PlayerRot: (%g, %g, %g) PointVel: (%g, %g, %g), CamVel: (%g, %g, %g) ScreenDx: (%g, %g, %g) ScreenDy: (%g, %g, %g) Flow: (%g, %g) PolarFlow: (%g, %g) HSV: (%g, %g, %g) RGB: (%g, %g, %g)\n",
-			      x, y,
-			      PlayerRot.Pitch, PlayerRot.Yaw, PlayerRot.Roll,
-			      PointVel.X, PointVel.Y, PointVel.Z,
-			      CamVel.X, CamVel.Y, CamVel.Z,
-			      ScreenDx.X, ScreenDx.Y, ScreenDx.Z,
-			      ScreenDy.X, ScreenDy.Y, ScreenDy.Z,
-			      Flow.X, Flow.Y,
-			      PolarFlow.X, PolarFlow.Y,
-			      HSV.R, HSV.G, HSV.B,
-			      color.R, color.G, color.B);
+				printf("(%d, %d) PlayerRot: (%g, %g, %g) PointVel: (%g, %g, %g), CamVel: (%g, %g, %g) ScreenDx: (%g, %g, %g) ScreenDy: (%g, %g, %g) Flow: (%g, %g) PolarFlow: (%g, %g) HSV: (%g, %g, %g) RGB: (%g, %g, %g)\n",
+					x, y,
+					PlayerRot.Pitch, PlayerRot.Yaw, PlayerRot.Roll,
+					PointVel.X, PointVel.Y, PointVel.Z,
+					CamVel.X, CamVel.Y, CamVel.Z,
+					ScreenDx.X, ScreenDx.Y, ScreenDx.Z,
+					ScreenDy.X, ScreenDy.Y, ScreenDy.Z,
+					Flow.X, Flow.Y,
+					PolarFlow.X, PolarFlow.Y,
+					HSV.R, HSV.G, HSV.B,
+					color.R, color.G, color.B);
 			}
 		}
 	}
@@ -683,24 +683,24 @@ extern "C" bool CaptureDepthField(UObject* _this, const IntSize* size, void* dat
 			FSceneView__SafeDeprojectFVector2D(SceneView, ScreenPosition, WorldOrigin, WorldDirection);
 
 			bool bHit = World->LineTraceSingleByChannel(
-			    HitResult,
-			    WorldOrigin,
-			    WorldOrigin + WorldDirection * HitResultTraceDistance,
-			    TraceChannel,
-			    CollisionQueryParams);
+				HitResult,
+				WorldOrigin,
+				WorldOrigin + WorldDirection * HitResultTraceDistance,
+				TraceChannel,
+				CollisionQueryParams);
 
 			AActor* Actor = NULL;
 			FVector CamVel, PointVel, Flow;
 
 			if(bHit) {
-			  const auto &HitLoc = HitResult.Location;
-			  Actor = HitResult.GetActor();
+				const auto &HitLoc = HitResult.Location;
+				Actor = HitResult.GetActor();
 
-			  FVector HitLocRel = HitLoc - PlayerLoc;
-			  float DistToHit = FVector::DotProduct(HitLoc - PlayerLoc, PlayerF);
-	*values++ = DistToHit;
+				FVector HitLocRel = HitLoc - PlayerLoc;
+				float DistToHit = FVector::DotProduct(HitLoc - PlayerLoc, PlayerF);
+				*values++ = DistToHit;
 			} else {
-	*values++ = 0;
+				*values++ = 0;
 			}
 		}
 	}

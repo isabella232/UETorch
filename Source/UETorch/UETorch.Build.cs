@@ -17,49 +17,49 @@ namespace UnrealBuildTool.Rules
 		public UETorch(TargetInfo Target)
 		{
 			PublicIncludePaths.AddRange(
-			  new string[] {
-			    // ... add public include paths required here ...
-			  }
-			  );
+				new string[] {
+					// ... add public include paths required here ...
+				}
+				);
 
 			PrivateIncludePaths.AddRange(
-			  new string[] {
-			    // "UETorch/Private"
-			    // how about Lua?
-			    // ... add other private include paths required here ...
-			  }
-			  );
+				new string[] {
+					// "UETorch/Private"
+					// how about Lua?
+					// ... add other private include paths required here ...
+				}
+				);
 
 			PublicDependencyModuleNames.AddRange(
-			  new string[]
-			  {
-			    "Core",
-			    "CoreUObject",
-			    "Engine",
-			    "InputCore",
-			    "SlateCore",
-			    "ScriptGeneratorPlugin",
-			    "ScriptPlugin",
-			    // ... add other public dependencies that you statically link with here ...
-			  }
-			  );
+				new string[]
+				{
+					"Core",
+					"CoreUObject",
+					"Engine",
+					"InputCore",
+					"SlateCore",
+					"ScriptGeneratorPlugin",
+					"ScriptPlugin",
+					// ... add other public dependencies that you statically link with here ...
+				}
+				);
 
 			if (UEBuildConfiguration.bBuildEditor == true)
 			{
-			  PublicDependencyModuleNames.AddRange(
-			    new string[]
-			    {
-			      "UnrealEd",
-			    }
-			  );
+				PublicDependencyModuleNames.AddRange(
+					new string[]
+					{
+						"UnrealEd",
+					}
+				);
 			}
 
 			DynamicallyLoadedModuleNames.AddRange(
-			  new string[]
-			  {
-			    // ... add any modules that your module loads dynamically here ...
-			  }
-			  );
+				new string[]
+				{
+					// ... add any modules that your module loads dynamically here ...
+				}
+				);
 
 			// Get the engine path. Ends with "Engine/"
 			string engine_path = Path.GetFullPath(BuildConfiguration.RelativeEnginePath);

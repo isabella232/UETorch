@@ -23,9 +23,11 @@ UTorchPluginComponent::UTorchPluginComponent(const FObjectInitializer& ObjectIni
 }
 
 FString UTorchPluginComponent::MakeLuaInitString() {
-	FString InitStr = "require 'uetorch';"                 // FIXME: use local uetorch package
-			              "local _main = require '" + MainModule + "';"
-			              "if type(_main)=='table' and _main.initialize then _main.initialize() end";
+	FString InitStr =
+		"require 'uetorch';" // FIXME: use local uetorch package
+		"local _main = require '" + MainModule + "';"
+		"if type(_main)=='table' and _main.initialize then _main.initialize() end";
+
 	return InitStr;
 }
 
