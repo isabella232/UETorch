@@ -24,8 +24,10 @@ public:
 
 	void Tick(float DeltaTime);
 	bool CallFunctionString(const FString& FunctionName, FString In, FString& Out);
+	bool CallFunctionArray(const FString& FunctionName, const TArray<FString>& In, FString& Out);
 };
 
 struct FTorchUtils {
 	static bool CallFunctionString(lua_State* LuaState, const ANSICHAR* FunctionName, const ANSICHAR* In, FString& Out);
+	static bool CallFunctionArray(lua_State* LuaState, const ANSICHAR* FunctionName, const TArray<FString>& In, FString& Out);
 };

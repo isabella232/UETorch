@@ -84,10 +84,60 @@ bool FTorchUtils::CallFunctionString(lua_State* LuaState, const ANSICHAR* Functi
 		UE_LOG(LogScriptPlugin, Warning, TEXT("Cannot call Lua function %s: %s"), ANSI_TO_TCHAR(FunctionName), ANSI_TO_TCHAR(lua_tostring(LuaState, -1)));
 		bResult = false;
 	}
-	if (!lua_isstring(LuaState, -1)) {
-		UE_LOG(LogScriptPlugin, Warning, TEXT("Lua function %s did not return a string"), ANSI_TO_TCHAR(FunctionName));
+	if (!lua_isstring(LuaState, -1) && !lua_isnil(LuaState, -1)) {
+		UE_LOG(LogScriptPlugin, Warning, TEXT("Lua function %s did not return a string or nil"), ANSI_TO_TCHAR(FunctionName));
 	}
-	Out = lua_tostring(LuaState, -1);
+	if (lua_isnil(LuaState, -1)) {
+	  Out = FString(TEXT("<nil>"));
+	} else {
+	  Out = lua_tostring(LuaState, -1);
+	}
+	lua_pop(LuaState, 1);
+	return bResult;
+}
+
+bool FTorchContext::CallFunctionArray(const FString& FunctionName, const TArray<FString>& In, FString& Out)
+{
+	check(LuaState);
+
+	bool bSuccess = FLuaUtils::DoesFunctionExist(LuaState, TCHAR_TO_ANSI(*FunctionName));
+	if (bSuccess)
+	{
+		bSuccess = FTorchUtils::CallFunctionArray(LuaState, TCHAR_TO_ANSI(*FunctionName), In, Out);
+	}
+	else
+	{
+		UE_LOG(LogScriptPlugin, Warning, TEXT("Failed to call function '%s' "), *FunctionName);
+	}
+
+	return bSuccess;
+}
+
+bool FTorchUtils::CallFunctionArray(lua_State* LuaState, const ANSICHAR* FunctionName, const TArray<FString>& In, FString& Out)
+{
+	if (FunctionName != NULL)
+	{
+		lua_getglobal(LuaState, FunctionName);
+	}
+	for (auto &Str : In) {
+	  lua_pushstring(LuaState, TCHAR_TO_ANSI(*Str));
+	}
+	bool bResult = true;
+	const int NumArgs = In.Num();
+	const int NumResults = 1;
+	if (lua_pcall(LuaState, NumArgs, NumResults, 0) != 0)
+	{
+		UE_LOG(LogScriptPlugin, Warning, TEXT("Cannot call Lua function %s: %s"), ANSI_TO_TCHAR(FunctionName), ANSI_TO_TCHAR(lua_tostring(LuaState, -1)));
+		bResult = false;
+	}
+	if (!lua_isstring(LuaState, -1) && !lua_isnil(LuaState, -1)) {
+		UE_LOG(LogScriptPlugin, Warning, TEXT("Lua function %s did not return a string or nil"), ANSI_TO_TCHAR(FunctionName));
+	}
+	if (lua_isnil(LuaState, -1)) {
+	  Out = FString(TEXT("<nil>"));
+	} else {
+  	  Out = lua_tostring(LuaState, -1);
+	}
 	lua_pop(LuaState, 1);
 	return bResult;
 }

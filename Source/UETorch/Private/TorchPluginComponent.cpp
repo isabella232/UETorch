@@ -88,7 +88,7 @@ bool UTorchPluginComponent::CallTorchFunction(FString FunctionName)
 	return bSuccess;
 }
 
-bool UTorchPluginComponent::CallTorchFunctionString (FString FunctionName, FString In, FString &Out)
+bool UTorchPluginComponent::CallTorchFunctionString(FString FunctionName, FString In, FString &Out)
 {
 	bool bSuccess = false;
 	if (Context)
@@ -96,5 +96,15 @@ bool UTorchPluginComponent::CallTorchFunctionString (FString FunctionName, FStri
 		bSuccess = Context->CallFunctionString(FunctionName, In, Out);
 	}
 	return bSuccess;
+}
+
+bool UTorchPluginComponent::CallTorchFunctionArray(FString FunctionName, TArray<FString> In, FString &Out)
+{
+  bool bSuccess = false;
+  if (Context)
+  {
+    bSuccess = Context->CallFunctionArray(FunctionName, In, Out);
+  }
+  return bSuccess;
 }
 
