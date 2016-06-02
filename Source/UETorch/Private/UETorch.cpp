@@ -707,15 +707,39 @@ extern "C" bool CaptureDepthField(UObject* _this, const IntSize* size, void* dat
 	return true;
 }
 
-extern "C" bool SetActorPosition(AActor* object, double x, double y, double z) {
+/**
+ * Getters and setters for Actor properties.
+ */
+
+extern "C" bool SetActorLocation(AActor* object, double x, double y, double z) {
+	if(!object) {
+		printf("object doesn't exist\n");
+		return false;
+	}
 	return object->SetActorLocation(FVector(x,y,z), false);
 }
 
 extern "C" bool SetActorRotation(AActor* object, double pitch, double roll, double yaw) {
+	if(!object) {
+		printf("object doesn't exist\n");
+		return false;
+	}
 	return object->SetActorRotation(FRotator(pitch,roll,yaw));
 }
 
+extern "C" bool SetActorLocationAndRotation(AActor* object, double x, double y, double z, double pitch, double roll, double yaw) {
+	if(!object) {
+		printf("object doesn't exist\n");
+		return false;
+	}
+	return object->SetActorLocationAndRotation(FVector(x,y,z), FRotator(pitch,roll,yaw), false);
+}
+
 extern "C" void SetActorVisible(AActor* object, bool visible) {
+	if(!object) {
+		printf("object doesn't exist\n");
+		return;
+	}
 	object->SetActorHiddenInGame(!visible);
 }
 
@@ -733,7 +757,25 @@ extern "C" bool SetActorVelocity(AActor* object, double x, double y, double z) {
 	return true;
 }
 
+extern "C" bool SetActorAngularVelocity(AActor* object, double x, double y, double z) {
+	if(!object) {
+		printf("object doesn't exist\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(!component) {
+		printf("Object doesn't have StaticMeshComponent\n");
+		return false;
+	}
+	component->SetPhysicsAngularVelocity(FVector(x,y,z));
+	return true;
+}
+
 extern "C" bool SetMaterial(AActor* object, UMaterial* material) {
+	if(!object) {
+		printf("object doesn't exist\n");
+		return false;
+	}
 	if(!material) {
 		printf("Material doesn't exist\n");
 		return false;

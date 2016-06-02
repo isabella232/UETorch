@@ -37,11 +37,13 @@ bool CaptureDepthField(UObject* _this, const IntSize* size, void* data, int stri
 void PressKey(const char *key, int ControllerId, int eventType);
 bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float MaxDeltaSeconds);
 
-bool SetActorPosition(AActor* object, double x, double y, double z);
+bool SetActorLocation(AActor* object, double x, double y, double z);
 bool SetActorRotation(AActor* object, double pitch, double roll, double yaw);
+bool SetActorLocationAndRotation(AActor* object, double x, double y, double z, double pitch, double roll, double yaw);
 void SetActorVisible(AActor* object, bool visible);
 bool SetActorVelocity(AActor* object, double x, double y, double z);
-bool SetMaterial(AActor* object, UMaterial* materialId);
+bool SetActorAngularVelocity(AActor* object, double x, double y, double z);
+bool SetMaterial(AActor* object, UMaterial* material);
 ]]
 
 local utlib = ffi.C
@@ -401,8 +403,10 @@ function DepthField(stride, verbose)
    return depth
 end
 
-SetActorPosition = utlib.SetActorPosition
+SetActorLocation = utlib.SetActorLocation
 SetActorRotation = utlib.SetActorRotation
+SetActorLocationAndRotation = utlib.SetActorLocationAndRotation
 SetActorVisible = utlib.SetActorVisible
 SetActorVelocity = utlib.SetActorVelocity
+SetActorAngularVelocity = utlib.SetActorAngularVelocity
 SetMaterial = utlib.SetMaterial
