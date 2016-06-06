@@ -706,3 +706,191 @@ extern "C" bool CaptureDepthField(UObject* _this, const IntSize* size, void* dat
 	}
 	return true;
 }
+
+/**
+ * Getters and setters for Actor properties.
+ */
+
+extern "C" bool GetActorLocation(AActor* object, float* x, float* y, float* z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	FVector actorLoc = object->GetActorLocation();
+	*x = actorLoc.X;
+	*y = actorLoc.Y;
+	*z = actorLoc.Z;
+	return true;
+}
+
+extern "C" bool GetActorRotation(AActor* object, float* pitch, float* yaw, float* roll) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	FRotator actorRot = object->GetActorRotation();
+	*pitch = actorRot.Pitch;
+	*yaw = actorRot.Yaw;
+	*roll = actorRot.Roll;
+	return true;
+}
+
+extern "C" bool GetActorVisible(AActor* object, bool* visible) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	*visible = object->bHidden;
+	return true;
+}
+
+extern "C" bool GetActorVelocity(AActor* object, float* x, float* y, float* z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(component == NULL) {
+		printf("Object doesn't have an StaticMeshComponent\n");
+		return false;
+	}
+	FVector actorLinVel = component->GetPhysicsLinearVelocity();
+	return true;
+}
+
+extern "C" bool GetActorAngularVelocity(AActor* object, float* x, float* y, float* z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(component == NULL) {
+		printf("Object doesn't have an StaticMeshComponent\n");
+		return false;
+	}
+	FVector actorAngVel = component->GetPhysicsAngularVelocity();
+	*x = actorAngVel.X;
+	*y = actorAngVel.Y;
+	*z = actorAngVel.Z;
+	return true;
+}
+
+extern "C" bool SetActorLocation(AActor* object, float x, float y, float z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	return object->SetActorLocation(FVector(x,y,z), false);
+}
+
+extern "C" bool SetActorRotation(AActor* object, float pitch, float yaw, float roll) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	return object->SetActorRotation(FRotator(pitch,yaw,roll));
+}
+
+extern "C" bool SetActorLocationAndRotation(AActor* object, float x, float y, float z, float pitch, float yaw, float roll) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	return object->SetActorLocationAndRotation(FVector(x,y,z), FRotator(pitch,yaw,roll), false);
+}
+
+extern "C" bool SetActorVisible(AActor* object, bool visible) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	object->SetActorHiddenInGame(!visible);
+	return true;
+}
+
+extern "C" bool SetActorVelocity(AActor* object, float x, float y, float z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(component == NULL) {
+		printf("Object doesn't have an StaticMeshComponent\n");
+		return false;
+	}
+	FBodyInstance* BodyInst = GetBodyInstance(object);
+	if(BodyInst == NULL) {
+		printf("BodyInstance is null\n");
+		return false;
+	}
+	if(!BodyInst->bSimulatePhysics) {
+		printf("Simulate physics isn't enabled\n");
+		return false;
+	}
+	component->SetPhysicsLinearVelocity(FVector(x,y,z));
+	return true;
+}
+
+extern "C" bool SetActorAngularVelocity(AActor* object, float x, float y, float z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(component == NULL) {
+		printf("Object doesn't have an StaticMeshComponent\n");
+		return false;
+	}
+	FBodyInstance* BodyInst = GetBodyInstance(object);
+	if(BodyInst == NULL) {
+		printf("BodyInstance is null\n");
+		return false;
+	}
+	if(!BodyInst->bSimulatePhysics) {
+		printf("Simulate physics isn't enabled\n");
+		return false;
+	}
+	component->SetPhysicsAngularVelocity(FVector(x,y,z));
+	return true;
+}
+
+extern "C" bool SetMaterial(AActor* object, UMaterial* material) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	if(!material) {
+		printf("Material doesn't exist\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(component == NULL) {
+		printf("Object doesn't have an StaticMeshComponent\n");
+		return false;
+	}
+	component->SetMaterial(0, material);
+	return true;
+}
+
+extern "C" bool AddForce(AActor* object, float x, float y, float z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	UStaticMeshComponent *component = object->FindComponentByClass<UStaticMeshComponent>();
+	if(component == NULL) {
+		printf("Object doesn't have an StaticMeshComponent\n");
+		return false;
+	}
+	FBodyInstance* BodyInst = GetBodyInstance(object);
+	if(BodyInst == NULL) {
+		printf("BodyInstance is null\n");
+		return false;
+	}
+	if(!BodyInst->bSimulatePhysics) {
+		printf("Simulate physics isn't enabled\n");
+		return false;
+	}
+	component->AddForce(FVector(x,y,z));
+	return true;
+}
