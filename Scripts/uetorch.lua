@@ -37,13 +37,19 @@ bool CaptureDepthField(UObject* _this, const IntSize* size, void* data, int stri
 void PressKey(const char *key, int ControllerId, int eventType);
 bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float MaxDeltaSeconds);
 
-bool SetActorLocation(AActor* object, double x, double y, double z);
-bool SetActorRotation(AActor* object, double pitch, double roll, double yaw);
-bool SetActorLocationAndRotation(AActor* object, double x, double y, double z, double pitch, double roll, double yaw);
+bool GetActorLocation(AActor* object, float* x, float* y, float* z);
+bool GetActorRotation(AActor* object, float* pitch, float* yaw, float* roll);
+bool GetActorVisible(AActor* object, bool* visible);
+bool GetActorVelocity(AActor* object, float* x, float* y, float* z);
+bool GetActorAngularVelocity(AActor* object, float* x, float* y, float* z);
+bool SetActorLocation(AActor* object, float x, float y, float z);
+bool SetActorRotation(AActor* object, float pitch, float yaw, float roll);
+bool SetActorLocationAndRotation(AActor* object, float x, float y, float z, float pitch, float yaw, float roll);
 void SetActorVisible(AActor* object, bool visible);
-bool SetActorVelocity(AActor* object, double x, double y, double z);
-bool SetActorAngularVelocity(AActor* object, double x, double y, double z);
+bool SetActorVelocity(AActor* object, float x, float y, float z);
+bool SetActorAngularVelocity(AActor* object, float x, float y, float z);
 bool SetMaterial(AActor* object, UMaterial* material);
+bool AddForce(AActor* object, float x, float y, float z);
 ]]
 
 local utlib = ffi.C
@@ -403,6 +409,63 @@ function DepthField(stride, verbose)
    return depth
 end
 
+-------------------------------------------------------------------------------
+--
+-- Actor properties
+--
+-- see https://docs.unrealengine.com/latest/INT/API/Runtime/Engine/GameFramework/AActor/index.html
+-- and https://docs.unrealengine.com/latest/INT/API/Runtime/Engine/Components/UPrimitiveComponent/index.html
+-- for further reference
+-------------------------------------------------------------------------------
+
+function GetActorLocation(actor)
+   local x = ffi.new('float[?]', 1)
+   local y = ffi.new('float[?]', 1)
+   local z = ffi.new('float[?]', 1)
+   if not utlib.GetActorLocation(actor,x,y,z) then
+      return nil
+   end
+   return {x = x[0],y = y[0],z = z[0]}
+end
+
+function GetActorRotation(actor)
+   local pitch = ffi.new('float[?]', 1)
+   local yaw = ffi.new('float[?]', 1)
+   local roll = ffi.new('float[?]', 1)
+   if not utlib.GetActorRotation(actor,pitch,yaw,roll) then
+      return nil
+   end
+   return {pitch = pitch[0], yaw = yaw[0], roll = roll[0]}
+end
+
+function GetActorVisible(actor)
+   local visible = ffi.new('bool[?]', 1)
+   if not utlib.GetActorVisible(actor, visible) then
+      return nil
+   end
+   return visible[0]
+end
+
+function GetActorVelocity(actor)
+   local x = ffi.new('float[?]', 1)
+   local y = ffi.new('float[?]', 1)
+   local z = ffi.new('float[?]', 1)
+   if not utlib.GetActorVelocity(actor,x,y,z) then
+      return nil
+   end
+   return {x = x[0],y = y[0],z = z[0]}
+end
+
+function GetActorAngularVelocity(actor)
+   local x = ffi.new('float[?]', 1)
+   local y = ffi.new('float[?]', 1)
+   local z = ffi.new('float[?]', 1)
+   if not utlib.GetActorAngularVelocity(actor,x,y,z) then
+      return nil
+   end
+   return {x = x[0], y = y[0], z = z[0]}
+end
+
 SetActorLocation = utlib.SetActorLocation
 SetActorRotation = utlib.SetActorRotation
 SetActorLocationAndRotation = utlib.SetActorLocationAndRotation
@@ -410,3 +473,4 @@ SetActorVisible = utlib.SetActorVisible
 SetActorVelocity = utlib.SetActorVelocity
 SetActorAngularVelocity = utlib.SetActorAngularVelocity
 SetMaterial = utlib.SetMaterial
+AddForce = utlib.AddForce
