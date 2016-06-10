@@ -36,6 +36,7 @@ bool CaptureDepthField(UObject* _this, const IntSize* size, void* data, int stri
 
 void PressKey(const char *key, int ControllerId, int eventType);
 bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float MaxDeltaSeconds);
+bool SetResolution(int x, int y);
 
 bool GetActorLocation(AActor* object, float* x, float* y, float* z);
 bool GetActorRotation(AActor* object, float* pitch, float* yaw, float* roll);
@@ -66,7 +67,9 @@ local utlib = ffi.C
 --
 -------------------------------------------------------------------------------
 
-trepl = require 'trepl'
+local uetorch = {}
+
+local trepl = require 'trepl'
 
 local co = coroutine.create(function ()
    while true do
@@ -76,9 +79,12 @@ local co = coroutine.create(function ()
 end)
 
 -- Enter the REPL.
-function start_repl()
+function uetorch.start_repl()
    coroutine.resume(co)
 end
+
+-- Add a global version so that it can be accessed from Blueprints
+start_repl = uetorch.start_repl
 
 local TimeRemaining = nil
 local CountTicks = false
@@ -86,7 +92,7 @@ local CountTicks = false
 -- Typically called from the REPL.
 -- Runs the game for `time` seconds (or `time` ticks if inTicks=true)
 -- and then resumes the REPL.
-function go(time, inTicks)
+function uetorch.go(time, inTicks)
    TimeRemaining = time or 1
    CountTicks = inTicks or false
    coroutine.yield()
@@ -103,12 +109,12 @@ local TickHooks = {}
 
 -- add a tick 'hook' function f called at each game loop tick
 -- tick hooks should take a single argument (dt) and return nothing.
-function AddHook(f)
+function uetorch.AddTickHook(f)
    table.insert(TickHooks, f)
 end
 
 -- remove the function f from the set of tick hooks
-function RemoveHook(f)
+function uetorch.RemoveTickHook(f)
    for i = #TickHooks, 1, -1 do
       if TickHooks[i] == f then
          table.remove(TickHooks, i)
@@ -117,7 +123,7 @@ function RemoveHook(f)
 end
 
 -- remove all tick hooks
-function ClearHooks()
+function uetorch.ClearTickHooks()
    TickHooks = {}
 end
 
@@ -134,7 +140,7 @@ end
 --
 
 function Tick(dt)
-   _UntapKeys()
+   uetorch._UntapKeys()
    if CountTicks then dt = 1 end
    if TimeRemaining then
       TimeRemaining = TimeRemaining - dt
@@ -157,15 +163,16 @@ end
 -- This is useful for running at faster-than-real-time, and also ensures
 -- a consistent tick rate for reproducible simulation, fixed-fps screenshots,
 --  etc.
-function SetTickDeltaBounds(min, max)
+function uetorch.SetTickDeltaBounds(min, max)
    return utlib.SetTickDeltaBounds(this, min, max)
 end
 
-
--- FIXME
-function GetConfig(key)
-   return tostring(config[key])
+-- Simple function to set the exact FPS. This will make the game run at slower
+-- or faster than real time depending on the speed of your system.
+function uetorch.SetFPS(fps)
+  return utlib.SetTickDeltaBounds(this, 1/fps, 1/fps)
 end
+
 
 -------------------------------------------------------------------------------
 -- Keyboard input
@@ -178,26 +185,26 @@ local IE_PRESSED = 0
 local IE_RELEASED = 1
 
 -- press and hold the key with this name
-function PressKey(key)
+function uetorch.PressKey(key)
    utlib.PressKey(key, 0, IE_PRESSED)
 end
 
 -- release the key with this name
-function ReleaseKey(key)
+function uetorch.ReleaseKey(key)
    utlib.PressKey(key, 0, IE_RELEASED)
 end
 
 local _tapped = {}
-function _UntapKeys()
+function uetorch._UntapKeys()
    for i,v in ipairs(_tapped) do
-      ReleaseKey(v)
+      uetorch.ReleaseKey(v)
    end
    _tapped = {}
 end
 
 -- press the key with this name, and release it on the next tick
-function TapKey(k)
-   PressKey(k)
+function uetorch.TapKey(k)
+   uetorch.PressKey(k)
    table.insert(_tapped, k)
 end
 
@@ -216,7 +223,7 @@ end
 -- Returns:
 --     An FFI pointer to the Actor object,
 --     or nil if no actor with this name exists.
-function GetActor(name)
+function uetorch.GetActor(name)
    local level = UE.GetFullName(UE.GetCurrentLevel(this))
    level = string.sub(level, 7, -1) -- remove "Level"
    local actor = UE.FindObject(Actor.Class(), nil, level..'.'..name)
@@ -233,7 +240,7 @@ end
 --     tensor: an optional FloatTensor to store the output
 -- Returns:
 --     A FloatTensor of size (3,Y,X) containing the screenshot image
-function Screen(tensor)
+function uetorch.Screen(tensor)
    local size = ffi.new('IntSize[?]', 1)
    utlib.GetViewportSize(size)
 
@@ -267,7 +274,7 @@ end
 --     object at this viewport pixel, or 0 if there is no object from the list at
 --     that location in the viewport.
 --
-function ObjectSegmentation(objects, stride, verbose)
+function uetorch.ObjectSegmentation(objects, stride, verbose)
    assert(objects, "must specify objects for segmentation")
    stride = stride or 1
    verbose = verbose or false
@@ -306,7 +313,7 @@ end
 --     a ByteTensor of size [#objects,Y/stride,X/stride].
 --     Each value mask[i,x,y] is 1 if object[i] is in the line of sight
 --     at pixel [y*stride,x*stride] (even if occluded), and 0 otherwise.
-function ObjectMasks(objects, stride, verbose)
+function uetorch.ObjectMasks(objects, stride, verbose)
    assert(objects, "must specify objects for segmentation")
    stride  = stride or 1
    verbose = verbose or false
@@ -348,7 +355,7 @@ end
 --           optical flow converted to RGB color, where hue represents direction
 --           and saturation represents magnitude. The scale is specified by maxFlow,
 --           so the RGB image is saturated at flow=maxFlow.
-function OpticalFlow(maxFlow, stride, verbose)
+function uetorch.OpticalFlow(maxFlow, stride, verbose)
    maxFlow = maxFlow or 1
    stride = stride or 1
    verbose = verbose or false
@@ -377,7 +384,6 @@ function OpticalFlow(maxFlow, stride, verbose)
    return flow, rgb
 end
 
-
 -- Capture the depth field at each pixel in the viewport.
 --
 -- Parameters:
@@ -387,7 +393,7 @@ end
 --     depth: A FloatTensor of size (Y/stride,X/stride) containing the 2D
 --            depth field at each point in the viewport.
 --
-function DepthField(stride, verbose)
+function uetorch.DepthField(stride, verbose)
    stride = stride or 1
    verbose = verbose or false
    local size = ffi.new('IntSize[?]', 1)
@@ -418,7 +424,7 @@ end
 -- for further reference
 -------------------------------------------------------------------------------
 
-function GetActorLocation(actor)
+function uetorch.GetActorLocation(actor)
    local x = ffi.new('float[?]', 1)
    local y = ffi.new('float[?]', 1)
    local z = ffi.new('float[?]', 1)
@@ -428,7 +434,7 @@ function GetActorLocation(actor)
    return {x = x[0],y = y[0],z = z[0]}
 end
 
-function GetActorRotation(actor)
+function uetorch.GetActorRotation(actor)
    local pitch = ffi.new('float[?]', 1)
    local yaw = ffi.new('float[?]', 1)
    local roll = ffi.new('float[?]', 1)
@@ -438,7 +444,7 @@ function GetActorRotation(actor)
    return {pitch = pitch[0], yaw = yaw[0], roll = roll[0]}
 end
 
-function GetActorVisible(actor)
+function uetorch.GetActorVisible(actor)
    local visible = ffi.new('bool[?]', 1)
    if not utlib.GetActorVisible(actor, visible) then
       return nil
@@ -446,7 +452,7 @@ function GetActorVisible(actor)
    return visible[0]
 end
 
-function GetActorVelocity(actor)
+function uetorch.GetActorVelocity(actor)
    local x = ffi.new('float[?]', 1)
    local y = ffi.new('float[?]', 1)
    local z = ffi.new('float[?]', 1)
@@ -456,7 +462,7 @@ function GetActorVelocity(actor)
    return {x = x[0],y = y[0],z = z[0]}
 end
 
-function GetActorAngularVelocity(actor)
+function uetorch.GetActorAngularVelocity(actor)
    local x = ffi.new('float[?]', 1)
    local y = ffi.new('float[?]', 1)
    local z = ffi.new('float[?]', 1)
@@ -466,11 +472,14 @@ function GetActorAngularVelocity(actor)
    return {x = x[0], y = y[0], z = z[0]}
 end
 
-SetActorLocation = utlib.SetActorLocation
-SetActorRotation = utlib.SetActorRotation
-SetActorLocationAndRotation = utlib.SetActorLocationAndRotation
-SetActorVisible = utlib.SetActorVisible
-SetActorVelocity = utlib.SetActorVelocity
-SetActorAngularVelocity = utlib.SetActorAngularVelocity
-SetMaterial = utlib.SetMaterial
-AddForce = utlib.AddForce
+uetorch.SetActorLocation = utlib.SetActorLocation
+uetorch.SetActorRotation = utlib.SetActorRotation
+uetorch.SetActorLocationAndRotation = utlib.SetActorLocationAndRotation
+uetorch.SetActorVisible = utlib.SetActorVisible
+uetorch.SetActorVelocity = utlib.SetActorVelocity
+uetorch.SetActorAngularVelocity = utlib.SetActorAngularVelocity
+uetorch.SetMaterial = utlib.SetMaterial
+uetorch.AddForce = utlib.AddForce
+uetorch.SetResolution = utlib.SetResolution
+
+return uetorch

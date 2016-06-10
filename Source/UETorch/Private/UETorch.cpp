@@ -894,3 +894,14 @@ extern "C" bool AddForce(AActor* object, float x, float y, float z) {
 	component->AddForce(FVector(x,y,z));
 	return true;
 }
+
+extern "C" bool SetResolution(int x, int y) {
+	if(GEngine && GEngine->GameViewport && GEngine->GameViewport->ViewportFrame) {
+		int32 WindowModeInt = GSystemResolution.WindowMode;
+		EWindowMode::Type WindowMode = EWindowMode::ConvertIntToWindowMode(WindowModeInt);
+		GEngine->GameViewport->ViewportFrame->ResizeFrame(x, y, WindowMode);
+		return true;
+	} else {
+		return false;
+	}
+}
