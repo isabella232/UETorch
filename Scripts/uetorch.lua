@@ -35,6 +35,7 @@ bool CaptureOpticalFlow(UObject* _this, const IntSize* size, void* flow_data, vo
 bool CaptureDepthField(UObject* _this, const IntSize* size, void* data, int stride, bool verbose);
 
 void PressKey(const char *key, int ControllerId, int eventType);
+void SetMouse(int x, int y);
 bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float MaxDeltaSeconds);
 bool SetResolution(int x, int y);
 
@@ -481,5 +482,6 @@ uetorch.SetActorAngularVelocity = utlib.SetActorAngularVelocity
 uetorch.SetMaterial = utlib.SetMaterial
 uetorch.AddForce = utlib.AddForce
 uetorch.SetResolution = utlib.SetResolution
+uetorch.SetMouse = utlib.SetMouse
 
 return uetorch
