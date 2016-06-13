@@ -136,6 +136,29 @@ extern "C" void GetViewportSize(IntSize* r)
 	r->Y = size.Y;
 }
 
+/**
+ * Sets mouse position to point (x, y).
+ * @param x the x position to set the cursor to
+ * @param y the y position to set the cursor to
+ */
+extern "C" void SetMouse(int x, int y)
+{
+	if(GEngine == NULL){
+		printf("GEngine null\n");
+		return;
+	}
+	if(GEngine->GameViewport == NULL){
+		printf("GameViewport null\n");
+		return;
+	}
+	if(GEngine->GameViewport->Viewport == NULL){
+		printf("Viewport null\n");
+		return;
+	}
+	FViewport* Viewport = GEngine->GameViewport->Viewport;
+	Viewport->SetMouse(x, y);
+}
+
 
 /**
  * Capture a screenshot from this actor's viewport.
