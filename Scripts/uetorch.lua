@@ -44,12 +44,16 @@ bool GetActorRotation(AActor* object, float* pitch, float* yaw, float* roll);
 bool GetActorVisible(AActor* object, bool* visible);
 bool GetActorVelocity(AActor* object, float* x, float* y, float* z);
 bool GetActorAngularVelocity(AActor* object, float* x, float* y, float* z);
+bool GetActorScale3D(AActor* object, float* x, float* y, float* z);
+
 bool SetActorLocation(AActor* object, float x, float y, float z);
 bool SetActorRotation(AActor* object, float pitch, float yaw, float roll);
 bool SetActorLocationAndRotation(AActor* object, float x, float y, float z, float pitch, float yaw, float roll);
 void SetActorVisible(AActor* object, bool visible);
 bool SetActorVelocity(AActor* object, float x, float y, float z);
 bool SetActorAngularVelocity(AActor* object, float x, float y, float z);
+bool SetActorScale3D(AActor* object, float x, float y, float z);
+
 bool SetMaterial(AActor* object, UMaterial* material);
 bool AddForce(AActor* object, float x, float y, float z);
 ]]
@@ -460,7 +464,7 @@ function uetorch.GetActorVelocity(actor)
    if not utlib.GetActorVelocity(actor,x,y,z) then
       return nil
    end
-   return {x = x[0],y = y[0],z = z[0]}
+   return {x = x[0], y = y[0],z = z[0]}
 end
 
 function uetorch.GetActorAngularVelocity(actor)
@@ -473,12 +477,23 @@ function uetorch.GetActorAngularVelocity(actor)
    return {x = x[0], y = y[0], z = z[0]}
 end
 
+function uetorch.GetActorScale3D(actor)
+   local x = ffi.new('float[?]', 1)
+   local y = ffi.new('float[?]', 1)
+   local z = ffi.new('float[?]', 1)
+   if not utlib.GetActorScale3D(actor,x,y,z) then
+      return nil
+   end
+   return {x = x[0], y = y[0], z = z[0]}
+end
+
 uetorch.SetActorLocation = utlib.SetActorLocation
 uetorch.SetActorRotation = utlib.SetActorRotation
 uetorch.SetActorLocationAndRotation = utlib.SetActorLocationAndRotation
 uetorch.SetActorVisible = utlib.SetActorVisible
 uetorch.SetActorVelocity = utlib.SetActorVelocity
 uetorch.SetActorAngularVelocity = utlib.SetActorAngularVelocity
+uetorch.SetActorScale3D = utlib.SetActorScale3D
 uetorch.SetMaterial = utlib.SetMaterial
 uetorch.AddForce = utlib.AddForce
 uetorch.SetResolution = utlib.SetResolution

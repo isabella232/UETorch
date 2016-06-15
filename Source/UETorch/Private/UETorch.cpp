@@ -798,6 +798,18 @@ extern "C" bool GetActorAngularVelocity(AActor* object, float* x, float* y, floa
 	return true;
 }
 
+extern "C" bool GetActorScale3D(AActor* object, float* x, float* y, float* z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	FVector actorScale = object->GetActorScale3D();
+	*x = actorScale.X;
+	*y = actorScale.Y;
+	*z = actorScale.Z;
+	return true;
+}
+
 extern "C" bool SetActorLocation(AActor* object, float x, float y, float z) {
 	if(object == NULL) {
 		printf("Object is null\n");
@@ -874,6 +886,15 @@ extern "C" bool SetActorAngularVelocity(AActor* object, float x, float y, float 
 		return false;
 	}
 	component->SetPhysicsAngularVelocity(FVector(x,y,z));
+	return true;
+}
+
+extern "C" bool SetActorScale3D(AActor* object, float x, float y, float z) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	object->SetActorScale3D(FVector(x,y,z));
 	return true;
 }
 
