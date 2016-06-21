@@ -810,6 +810,22 @@ extern "C" bool GetActorScale3D(AActor* object, float* x, float* y, float* z) {
 	return true;
 }
 
+extern "C" bool GetActorBounds(AActor* object, float* x, float* y, float* z, float* boxX, float* boxY, float* boxZ) {
+	if(object == NULL) {
+		printf("Object is null\n");
+		return false;
+	}
+	FVector Origin,BoxExtent;
+	object->GetActorBounds(false, Origin, BoxExtent);
+	*x = Origin.X;
+	*y = Origin.Y;
+	*z = Origin.Z;
+	*boxX = BoxExtent.X;
+	*boxY = BoxExtent.Y;
+	*boxZ = BoxExtent.Z;
+	return true;
+}
+
 extern "C" bool SetActorLocation(AActor* object, float x, float y, float z) {
 	if(object == NULL) {
 		printf("Object is null\n");
