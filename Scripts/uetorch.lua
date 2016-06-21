@@ -45,6 +45,7 @@ bool GetActorVisible(AActor* object, bool* visible);
 bool GetActorVelocity(AActor* object, float* x, float* y, float* z);
 bool GetActorAngularVelocity(AActor* object, float* x, float* y, float* z);
 bool GetActorScale3D(AActor* object, float* x, float* y, float* z);
+bool GetActorBounds(AActor* object, float* x, float* y, float* z, float* boxX, float* boxY, float* boxZ);
 
 bool SetActorLocation(AActor* object, float x, float y, float z);
 bool SetActorRotation(AActor* object, float pitch, float yaw, float roll);
@@ -485,6 +486,19 @@ function uetorch.GetActorScale3D(actor)
       return nil
    end
    return {x = x[0], y = y[0], z = z[0]}
+end
+
+function uetorch.GetActorBounds(actor)
+   local x = ffi.new('float[?]', 1)
+   local y = ffi.new('float[?]', 1)
+   local z = ffi.new('float[?]', 1)
+   local boxX = ffi.new('float[?]', 1)
+   local boxY = ffi.new('float[?]', 1)
+   local boxZ = ffi.new('float[?]', 1)
+   if not utlib.GetActorBounds(actor,x,y,z,boxX,boxY,boxZ) then
+      return nil
+   end
+   return {x = x[0], y = y[0], z = z[0], boxX = boxX[0], boxY = boxY[0], boxZ = boxZ[0]}
 end
 
 uetorch.SetActorLocation = utlib.SetActorLocation
