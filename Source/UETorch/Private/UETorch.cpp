@@ -9,7 +9,9 @@
 
 #include "UETorchPrivatePCH.h"
 #include "TorchPluginComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include <type_traits>
+
 
 class FUETorch : public IUETorch
 {
@@ -964,4 +966,8 @@ extern "C" bool SetResolution(int x, int y) {
 	} else {
 		return false;
 	}
+}
+
+extern "C" void ExecuteConsoleCommand(UObject* _this, char* command) {
+	UKismetSystemLibrary::ExecuteConsoleCommand(_this, command, NULL);
 }
