@@ -11,7 +11,10 @@ UETorch was developed for Linux; see [Building Unreal Engine on Linux](https://w
 
 
 ## Installing UETorch
-1. Download and install torch from https://github.com/torch/torch-distro. We would like to use Lua 5.2, so before installing, replace LUAJIT21 with LUA52 in install<span></span>.sh.
+1. Download and install torch from https://github.com/torch/torch-distro. When it's time to run install.sh, set the Lua version to 5.2:
+```bash
+TORCH_LUA_VERSION=LUA52 ./install.sh
+```
 2. Set up an Epic Games account at https://github.com/EpicGames/Signup/, needed to clone the Unreal Engine repository from github. UETorch currently only works with the source distribution of UE4, not the binary download.  
 3. Install all the Linux prerequisites mentioned at https://wiki.unrealengine.com/Building_On_Linux
 ```bash
