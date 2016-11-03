@@ -18,14 +18,14 @@ namespace UnrealBuildTool.Rules
 		{
 			PublicIncludePaths.AddRange(
 				new string[] {
+					"UETorch/Public"
 					// ... add public include paths required here ...
 				}
 				);
 
 			PrivateIncludePaths.AddRange(
 				new string[] {
-					// "UETorch/Private"
-					// how about Lua?
+					"UETorch/Private"
 					// ... add other private include paths required here ...
 				}
 				);
@@ -38,7 +38,7 @@ namespace UnrealBuildTool.Rules
 					"Engine",
 					"InputCore",
 					"SlateCore",
-					"ScriptGeneratorPlugin",
+					// "ScriptGeneratorPlugin",
 					"ScriptPlugin",
 					// ... add other public dependencies that you statically link with here ...
 				}
