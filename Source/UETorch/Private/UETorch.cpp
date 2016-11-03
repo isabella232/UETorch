@@ -10,6 +10,7 @@
 #include "UETorchPrivatePCH.h"
 #include "TorchPluginComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SceneViewport.h"
 #include <type_traits>
 
 
@@ -38,6 +39,17 @@ void FUETorch::ShutdownModule()
 
 
 /**
+ * Find an actor by name.
+ * @param fullName the full name of the actor, usually <level>.<ID Name>
+ *        See uetorch.GetActor() in uetorch.lua for usage.
+ */
+extern "C" AActor *FindActor(const char *fullName) {
+    UObject* Obj = StaticFindObject(AActor::StaticClass(), NULL, *FString(fullName), false);
+    AActor* Result = Cast<AActor>(Obj);
+    return Result;
+}
+
+/**
  * Simulate a user input event (press or relese a key).
  *
  * @param key name of the key that should be pressed.
@@ -48,43 +60,15 @@ void FUETorch::ShutdownModule()
  *        IE_PRESSED  - press the key
  *        IE_RELEASED - release the key
  */
- extern "C" void PressKey(const char *key, int ControllerId, int eventType) {
-	auto fkey = FKey(key);
-	auto ViewportClient = GEngine->GameViewport;
+ extern "C" void PressKey(UObject* _this, const char *key, int ControllerId, int eventType) {
+	auto fKey = FKey(key);
 
-	ViewportClient->InputKey(ViewportClient->Viewport, ControllerId, fkey, (EInputEvent) eventType);
-}
-
-// SetTickDeltaBounds() requires a patch to Unreal Engine that adds MinDeltaSeconds and MaxDeltaSeconds
-// to UWorld.
-// This is an SFINAE check to see whether the patch has been applied.
-struct UWorldHasMinDeltaSeconds
-{
-	struct Fallback { int MinDeltaSeconds; };
-	struct Combined : UWorld, Fallback { };
-	template<typename U, U> struct SFINAE;
-
-	template<typename U> static char f(SFINAE<int Fallback::*, &U::MinDeltaSeconds>*);
-	template<typename U> static int f(...);
-
-	static bool const value = sizeof(f<Combined>(0)) == sizeof(int);
-};
-
-
-template<typename WorldT>
-bool SetTickDeltaBoundsInternal(WorldT* World, float MinDeltaSeconds, float MaxDeltaSeconds, std::true_type)
-{
-	World->MinDeltaSeconds = MinDeltaSeconds;
-	World->MaxDeltaSeconds = MaxDeltaSeconds;
-	return true;
-}
-
-template<typename WorldT>
-bool SetTickDeltaBoundsInternal(WorldT* World, float MinDeltaSeconds, float MaxDeltaSeconds, std::false_type)
-{
-	printf("You need to the patch file located at Engine/Plugins/UETorch/UnrealEngine.patch\n");
-	printf("and rebuild Unreal Engine for SetTickDeltaBounds to work\n");
-	return false;
+	auto PlayerController = UGameplayStatics::GetPlayerController(_this, 0);
+	if(PlayerController == NULL) {
+		printf("PlayerController null\n");
+	} else {
+		PlayerController->InputKey(fKey, (EInputEvent) eventType, 1.0, false);
+	}
 }
 
 /**
@@ -101,13 +85,21 @@ bool SetTickDeltaBoundsInternal(WorldT* World, float MinDeltaSeconds, float MaxD
  */
 extern "C" bool SetTickDeltaBounds(UObject* _this, float MinDeltaSeconds, float MaxDeltaSeconds)
 {
-	UWorld* World = GEngine->GetWorldFromContextObject(_this);
-	if(World == NULL) {
+	UWorld *world = GEngine->GetWorldFromContextObject(_this);
+	if(world == NULL) {
 		printf("World null\n");
 		return false;
 	}
-	return SetTickDeltaBoundsInternal(World, MinDeltaSeconds, MaxDeltaSeconds,
-		std::integral_constant<bool, UWorldHasMinDeltaSeconds::value>());
+
+	AWorldSettings *settings = world->GetWorldSettings();
+	if(settings == NULL) {
+		printf("WorldSettings null\n");
+		return false;
+	}
+	settings->MinUndilatedFrameTime = MinDeltaSeconds;
+	settings->MaxUndilatedFrameTime = MaxDeltaSeconds;
+
+	return true;
 }
 
 typedef struct {
@@ -194,23 +186,28 @@ extern "C" bool CaptureScreenshot(IntSize* size, void* data)
 		return false;
 	}
 
-	TSharedPtr<SWindow> WindowPtr = GEngine->GameViewport->GetWindow();
+	TSharedPtr<SWidget> ViewportPtr = GEngine->GameViewport->GetGameViewportWidget();
 
 	bool bScreenshotSuccessful = false;
-
-	if( WindowPtr.IsValid() && FSlateApplication::IsInitialized() )
+	FIntRect SizeRect(0, 0, size->X, size->Y);
+	if( ViewportPtr.IsValid() && FSlateApplication::IsInitialized())
 	{
-		FIntVector Size(size->X, size->Y, 0);
-		TSharedRef<SWidget> WindowRef = WindowPtr.ToSharedRef();
-		bScreenshotSuccessful = FSlateApplication::Get().TakeScreenshot(WindowRef, Bitmap, Size);
+		FIntVector OutSize;
+		TSharedRef<SWidget> ViewportRef = ViewportPtr.ToSharedRef();
+		bScreenshotSuccessful = FSlateApplication::Get().TakeScreenshot(
+			ViewportRef, SizeRect, Bitmap, OutSize);
 	}
 	else
 	{
-		FIntRect Rect(0, 0, size->X, size->Y);
-		bScreenshotSuccessful = GetViewportScreenShot(Viewport, Bitmap, Rect);
+		bScreenshotSuccessful = GetViewportScreenShot(Viewport, Bitmap, SizeRect);
 	}
-	if(bScreenshotSuccessful)
+
+	if (bScreenshotSuccessful)
 	{
+		if (Bitmap.Num() != size->X * size->Y) {
+			printf("Screenshot bitmap had the wrong number of elements: %d\n", Bitmap.Num());
+			return false;
+		}
 		float* values = (float*) data;
 		for (const FColor& color : Bitmap) {
 			*values++ = color.R / 255.0f;
@@ -371,7 +368,6 @@ extern "C" bool CaptureSegmentation(UObject* _this, const IntSize* size, void* s
 			FSceneView__SafeDeprojectFVector2D(SceneView, ScreenPosition, WorldOrigin, WorldDirection);
 			// Cast ray from pixel to find intersecting object
 			bool bHit = World->LineTraceSingleByChannel(HitResult, WorldOrigin, WorldOrigin + WorldDirection * HitResultTraceDistance, TraceChannel, CollisionQueryParams);
-			if (verbose) printf("E\n");
 			AActor* Actor = NULL;
 			*seg_values = 0; // no foreground object
 			if(bHit) {
