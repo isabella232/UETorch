@@ -115,7 +115,7 @@ index ac7a50e..a183b52 100644
  	bool bHasDestroy;
  	bool bHasBeginPlay;
 diff --git a/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs b/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs
-index 4d27de3..a6ea780 100644
+index 4d27de3..887dc1e 100644
 --- a/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs
 +++ b/Engine/Plugins/ScriptPlugin/Source/ScriptPlugin/ScriptPlugin.Build.cs
 @@ -10,7 +10,7 @@ namespace UnrealBuildTool.Rules
@@ -135,7 +135,7 @@ index 4d27de3..a6ea780 100644
  			DynamicallyLoadedModuleNames.AddRange(
  				new string[]
  				{
-@@ -53,27 +52,22 @@ namespace UnrealBuildTool.Rules
+@@ -53,27 +52,21 @@ namespace UnrealBuildTool.Rules
  				}
  				);
  
@@ -149,7 +149,6 @@ index 4d27de3..a6ea780 100644
 +			var LuaInstallDirectory = Path.Combine(LuaPath, "install");
 +			var LuaLibDirectory = Path.Combine(LuaInstallDirectory, "lib");
 +			var LuaLibPath = Path.Combine(LuaLibDirectory, "liblua.so");
-+			Debug.Assert(File.Exists(LuaLibPath));
 +			Definitions.Add("WITH_LUA=1");
  
 -				// Path to Lua include files
