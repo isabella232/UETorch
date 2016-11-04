@@ -236,7 +236,7 @@ function uetorch.GetActor(name)
    local level = UE.GetFullName(UE.GetCurrentLevel(this))
    level = string.sub(level, 7, -1) -- remove "Level"
    local actor = utlib.FindActor(level .. '.' .. name)
-   if tonumber(actor)) ~= 0 then
+   if tonumber(actor) ~= 0 then
       return actor
    else
       return nil
