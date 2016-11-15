@@ -3,10 +3,22 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+if git rev-parse 4.13-UETorch > /dev/null 2>&1; then
+  if [ $(git rev-parse 4.13-UETorch^1) != $(git rev-parse 4.13) ]; then   
+    echo "git branch 4.13-UETorch already exists and has your commits on it. If you really want to re-run setup, you'll need to clean up and delete this branch yourself."   
+    exit 1    
+  fi    
+  git checkout 4.13
+  git branch -D 4.13-UETorch
+fi    
+    
+echo "=== Checking out the baseline UE4 commit... ==="    
+git checkout 4.13
+
 echo "=== Patching UE4 ==="
 cd $DIR/../../..
-git branch UETorch_base
-git checkout UETorch_base
+git branch 4.13-UETorch
+git checkout 4.13-UETorch
 git apply $DIR/UnrealEngine.patch
 git add -u
 git commit -m "UETorch patches"
