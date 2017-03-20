@@ -242,12 +242,13 @@ FSceneView* GetSceneView(APlayerController* PlayerController, UWorld* World) {
 	auto Viewport = GEngine->GameViewport->Viewport;
 
 	// Create a view family for the game viewport
-	FSceneViewFamilyContext ViewFamily(
+	static TSharedPtr<FSceneViewFamilyContext> ViewFamily;
+	ViewFamily = MakeShareable(new FSceneViewFamilyContext(
 		FSceneViewFamily::ConstructionValues(
 			Viewport,
 			World->Scene,
 			GEngine->GameViewport->EngineShowFlags )
-		.SetRealtimeUpdate(true) );
+		.SetRealtimeUpdate(true) ) );
 
 
 	// Calculate a view where the player is to update the streaming from the players start location
@@ -257,7 +258,7 @@ FSceneView* GetSceneView(APlayerController* PlayerController, UWorld* World) {
 	if (LocalPlayer == NULL) {
 		return NULL;
 	}
-	FSceneView* SceneView = LocalPlayer->CalcSceneView( &ViewFamily, /*out*/ ViewLocation, /*out*/ ViewRotation, Viewport );
+	FSceneView* SceneView = LocalPlayer->CalcSceneView( ViewFamily.Get(), /*out*/ ViewLocation, /*out*/ ViewRotation, Viewport );
 	return SceneView;
 }
 
